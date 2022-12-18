@@ -66,6 +66,71 @@ struct Author {
 
 };
 
+//单个keyword
+struct Keyword{
+    char keyword[61]={'\0'};
+
+    Keyword();
+
+    Keyword(char* id);
+
+    ~Keyword();
+
+    bool operator>(const Keyword &id) const;
+
+    bool operator==(const Keyword &id) const;
+
+    bool operator>=(const Keyword &id) const;
+
+    Keyword &operator=(const Keyword &id);
+};
+
+//以name优先排序的key
+struct Name_IBSN{
+    Name name;
+
+    ISBN bookISBN;
+
+    bool operator>(const Name_IBSN &id) const;
+
+    bool operator==(const Name_IBSN &id) const;
+
+    bool operator>=(const Name_IBSN &id) const;
+
+    Name_IBSN &operator=(const Name_IBSN &id);
+
+};
+
+//以author优先排序的key
+struct Author_IBSN{
+    Author author;
+
+    ISBN bookISBN;
+
+    bool operator>(const Author_IBSN &id) const;
+
+    bool operator==(const Author_IBSN &id) const;
+
+    bool operator>=(const Author_IBSN &id) const;
+
+    Author_IBSN &operator=(const Author_IBSN &id);
+};
+
+//以keyword(单个)优先排序的key
+struct Keyword_ISBN{
+    Keyword keyword;
+
+    ISBN bookISBN;
+
+    bool operator>(const Keyword_ISBN &id) const;
+
+    bool operator==(const Keyword_ISBN &id) const;
+
+    bool operator>=(const Keyword_ISBN &id) const;
+
+    Keyword_ISBN &operator=(const Keyword_ISBN &id);
+};
+
 struct Book {
 
     ISBN bookISBN;
@@ -74,7 +139,8 @@ struct Book {
 
     Author author;
 
-    char keyword[61]={'\0'};
+    //基础信息中存完整的keywords
+    char keywords[61]={'\0'};
 
     int quantity=0;
 
@@ -87,6 +153,16 @@ struct Book {
     bool operator==(const Book &id) const;
 
     bool operator>=(const Book &id) const;
+
+    //获取name优先排序的key 用Book中的信息生成对应的key
+    Name_IBSN GetKey(Name name1);
+
+    Author_IBSN GetKey(Author author1);
+
+    Keyword_ISBN GetKey(Keyword keyword1);
+
+    //打印book所有信息
+    void Print();
 
     //修改信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
     void Modify(std::string &CurrentPassword,std::string &NewPassword);
@@ -115,18 +191,27 @@ public:
     //修改图书信息
     void Modify();
 
+    //图书进货{3} import [Quantity] [TotalCost]
+    //修改quantity
+    void Import();
+
 private:
-    //储存账户信息的块状链表
     //类中用（）会和声明函数歧义
-    LinkList<I,Account> accountList{"account_information"};
+    //ISBN->图书信息
+    LinkList<ISBN,ISBN,Book> bookList{"book_information"};
 
-    std::fstream io_account_information;
+    //name排序
+    LinkList<Name,Name_IBSN,Book> nameList{"book_name"};
 
-//    std::fstream io_account_index;
+    //author排序
+    LinkList<Author,Author_IBSN,Book> authorList{"book_author"};
+
+    //单个keyword排序
+    //long 对应book在book_information地址
+    LinkList<Keyword,Keyword_ISBN,long> keywordList{"book_keyword"};
 
     //查找帐户
     Book FindBook(const std::string &UserID);
-
 
 };
 #endif //BOOKSTORE_BOOK_H

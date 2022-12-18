@@ -50,7 +50,9 @@ struct Account {
     bool operator>=(const Account &id) const;
 
     //获取key
-    ID GetKey() const;
+    ID GetKey(ID id) const;
+
+    void Print();
 
     //修改密码 ATTENTION：若修改成功，需要到文件中覆盖原有信息
     void ChangePassword(std::string &CurrentPassword,std::string &NewPassword);
@@ -82,16 +84,10 @@ public:
 private:
     //储存账户信息的块状链表
     //类中用（）会和声明函数歧义
-    LinkList<ID,Account> accountList{"account_information"};
-
-    std::fstream io_account_information;
-
-//    std::fstream io_account_index;
+    LinkList<ID,ID,Account> accountList{"account_information"};
 
     //查找帐户
     Account FindAccount(const std::string &UserID);
 
-//    //转格式
-//    void StringToChar(std::string str,char* ch);
 };
 #endif //BOOKSTORE_ACCOUNT_H

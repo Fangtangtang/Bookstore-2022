@@ -5,14 +5,13 @@
 #ifndef BOOKSTORE_LINKLIST_H
 #define BOOKSTORE_LINKLIST_H
 
-
 #include <fstream>
-#include<iostream>
+#include <iostream>
 
 //LinkList类 模板
-//someType 插入元素类型
-//template<class index,class someType>
-template<class index,class Key,class Value>
+//index 检索索引 ；key 排序标记 ；value 数组元素
+//GetKey(index indexSign) 重载函数 获取元素基于index的key index作为函数选择标记
+template<class index, class Key, class Value>
 class LinkList {
     static constexpr int blockSize = 1024;
 public:
@@ -58,7 +57,7 @@ public:
         }
     }
 
-    void Insert(Key key,Value ele) {
+    void Insert(Key key, Value ele) {
         bool break_flag = false;//是否break
         bool insert_flag = false;
         BlockNode blockNode;
@@ -70,7 +69,7 @@ public:
             iter = r_w_LinkList.tellp();
             blockNode.NodeHead.pre = head;
             headNode1.next = iter;
-            blockNode.Insert(key,ele);//不可能裂块
+            blockNode.Insert(key, ele);//不可能裂块
             r_w_LinkList.seekp(head);
             r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
             WriteNode(blockNode, iter);
@@ -80,7 +79,7 @@ public:
             head2 = ReadHead(iter);
             if (head2.max > key) {
                 blockNode = ReadNode(iter);
-                blockNode.Insert(key,ele);
+                blockNode.Insert(key, ele);
                 insert_flag = true;
                 if (blockNode.NodeHead.size == blockSize)break_flag = true;
                 if (break_flag) {
@@ -97,7 +96,7 @@ public:
                         if (head1.max > key) {
                             iter = head2.pre;
                             blockNode = ReadNode(iter);
-                            blockNode.Insert(key,ele);//插入当前块的array
+                            blockNode.Insert(key, ele);//插入当前块的array
                             if (blockNode.NodeHead.size == blockSize)break_flag = true;
                             if (break_flag) {
                                 BreakNode(iter, blockNode);
@@ -106,7 +105,7 @@ public:
                         }
                         if (key > head1.max) {
                             blockNode = ReadNode(iter);
-                            blockNode.Insert(key,ele);//插入后一块的array
+                            blockNode.Insert(key, ele);//插入后一块的array
                             if (blockNode.NodeHead.size == blockSize)break_flag = true;
                             if (break_flag) {
                                 BreakNode(iter, blockNode);
@@ -122,7 +121,7 @@ public:
                     if (head1.next != 0)iter = head1.next;
                     else iter = headNode1.next;
                     blockNode = ReadNode(iter);
-                    blockNode.Insert(key,ele);//插入后一块的array
+                    blockNode.Insert(key, ele);//插入后一块的array
                     if (blockNode.NodeHead.size == blockSize)break_flag = true;
                     if (break_flag) BreakNode(iter, blockNode);
                     WriteNode(blockNode, iter);
@@ -132,7 +131,7 @@ public:
     }
 
     //Delete
-    bool Delete(Key key,Value ele) {
+    bool Delete(Key key, Value ele) {
         long iter = headNode1.next;
         BlockNode blockNode;
         Head head1;
@@ -159,11 +158,11 @@ public:
                     headNode1.next = blockNode.NodeHead.next;
                     r_w_LinkList.seekp(head);
                     r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
-                    if (blockNode.NodeHead.next!=0){
-                        nextHead.pre=head;
-                        WriteHead(nextHead,blockNode.NodeHead.next);
+                    if (blockNode.NodeHead.next != 0) {
+                        nextHead.pre = head;
+                        WriteHead(nextHead, blockNode.NodeHead.next);
                     }
-                }else{
+                } else {
                     preHead.next = blockNode.NodeHead.next;
                     WriteHead(preHead, blockNode.NodeHead.pre);
                     if (blockNode.NodeHead.next != 0) {
@@ -175,15 +174,15 @@ public:
             }
             if (preHead.size > blockSize / 2) {
                 preNode = ReadNode(blockNode.NodeHead.pre);
-                blockNode.Insert(preNode.NodeHead.max,preNode.Array[preNode.NodeHead.size-1]);
-                preNode.Delete(preNode.Array[preNode.NodeHead.size-1]);
+                blockNode.Insert(preNode.NodeHead.max, preNode.Array[preNode.NodeHead.size - 1]);
+                preNode.Delete(preNode.Array[preNode.NodeHead.size - 1]);
                 WriteNode(preNode, blockNode.NodeHead.pre);
                 WriteNode(blockNode, iter);
                 return true;
             }
             if (nextHead.size > blockSize / 2) {
                 nextNode = ReadNode(blockNode.NodeHead.next);
-                blockNode.Insert(nextNode.NodeHead.min,nextNode.Array[0]);
+                blockNode.Insert(nextNode.NodeHead.min, nextNode.Array[0]);
                 nextNode.Delete(nextNode.Array[0]);
                 WriteNode(nextNode, blockNode.NodeHead.next);
                 WriteNode(blockNode, iter);
@@ -200,7 +199,7 @@ public:
         return true;
     }
 
-    void FindPrint(const index &index1){
+    void FindPrint(const index &index1) {
         long iter = headNode1.next;
         Head head1;
         while (iter != 0) {
@@ -208,27 +207,28 @@ public:
             if (index1 >= head1.min.GetIndex() && head1.max.GetIndex() >= index1)break;
             iter = head1.next;
         }
-        if(iter==0){
-            std::cout<<"null";
-            return ;
+        if (iter == 0) {
+            std::cout << "null";
+            return;
         }
-        BlockNode blockNode= ReadNode(iter);
-        int i=0;
-        while (!(index1==blockNode.Array[i].GetIndex())){
+        BlockNode blockNode = ReadNode(iter);
+        int i = 0;
+        while (!(index1 == blockNode.Array[i].GetIndex())) {
             ++i;
-            if(i==blockNode.NodeHead.size) {
-                std::cout<<"null";
+            if (i == blockNode.NodeHead.size) {
+                std::cout << "null";
                 return;//没有元素
             }
         }
-        while(true){
-            std::cout<<blockNode.Array[i].GetVal()<<" ";
+        while (true) {
+            blockNode.Array[i].print();
+//            std::cout << blockNode.Array[i].GetValue() << " ";
             ++i;
-            if(i==blockNode.NodeHead.size){//结束一个块
-                blockNode= ReadNode(blockNode.NodeHead.next);
-                i=0;
+            if (i == blockNode.NodeHead.size) {//结束一个块
+                blockNode = ReadNode(blockNode.NodeHead.next);
+                i = 0;
             }
-            if(!(index1==blockNode.Array[i].GetIndex())) return;//找完
+            if (!(index1 == blockNode.Array[i].GetIndex())) return;//找完
         }
     }
 
@@ -247,6 +247,7 @@ private:
     //头节点
     struct HeadNode {
         long next = 0;
+        int count=0;
     };
 
     //数据块
@@ -255,7 +256,7 @@ private:
         Value Array[blockSize];
 
         //Insert
-        void Insert(const Key &key,const Value &ele) {
+        void Insert(const Key &key, const Value &ele) {
             int i = 0;
             while (ele > Array[i] && i < NodeHead.size) {
                 ++i;
@@ -273,21 +274,22 @@ private:
         }
 
         //Delete
-        bool Delete(const Value &ele){
-            int i=0;
-            while(i < NodeHead.size) {
-                if(Array[i]==ele) break;
+        bool Delete(const Value &ele) {
+            int i = 0;
+            while (i < NodeHead.size) {
+                if (Array[i] == ele) break;
                 ++i;
             }
-            if(i==NodeHead.size) return false;
+            if (i == NodeHead.size) return false;
             --NodeHead.size;
             for (; i < NodeHead.size; ++i) {
                 Array[i] = Array[i + 1];
             }
             Value eleNull;
             Array[NodeHead.size] = eleNull;
-            NodeHead.min = Array[0].GetKey();
-            NodeHead.max = Array[NodeHead.size - 1].GetKey();
+            index indexSign;
+            NodeHead.min = Array[0].GetKey(indexSign);
+            NodeHead.max = Array[NodeHead.size - 1].GetKey(indexSign);
             return true;
         }
     };
@@ -312,6 +314,14 @@ private:
         r_w_LinkList.seekg(iter);
         r_w_LinkList.read(reinterpret_cast<char *> (&nodeHead), sizeof(Head));
         return nodeHead;
+    }
+
+    //读取一个数组元素
+    Value ReadValue(long iter) {
+        Value value;
+        r_w_LinkList.seekg(iter);
+        r_w_LinkList.read(reinterpret_cast<char *>(&value), sizeof(value));
+        return value;
     }
 
     //Write 块链信息
@@ -339,8 +349,9 @@ private:
         }
         blockNode.NodeHead.size = newBlock.NodeHead.size = blockSize / 2;
         newBlock.NodeHead.max = blockNode.NodeHead.max;
-        blockNode.NodeHead.max = blockNode.Array[blockSize / 2 - 1].GetKey();
-        newBlock.NodeHead.min = newBlock.Array[0].GetKey();
+        index indexSign;
+        blockNode.NodeHead.max = blockNode.Array[blockSize / 2 - 1].GetKey(indexSign);
+        newBlock.NodeHead.min = newBlock.Array[0].GetKey(indexSign);
         newBlock.NodeHead.next = blockNode.NodeHead.next;
         newBlock.NodeHead.pre = iter;
         blockNode.NodeHead.next = newIter;
@@ -377,4 +388,5 @@ private:
         }
     }
 };
+
 #endif //BOOKSTORE_LINKLIST_H

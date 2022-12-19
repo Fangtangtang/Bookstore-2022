@@ -11,7 +11,7 @@ class TokenScanner{
 public:
     TokenScanner()=default;
 
-    TokenScanner(const std::string& str);
+    explicit TokenScanner(const std::string& str);
 
     ~TokenScanner()=default;
 
@@ -19,6 +19,9 @@ public:
 
     //是否仍有输入
     bool hasMoreTokens() ;
+
+    //下一个合法token为string
+    void nextToken(std::string &str);
 
     //下一个合法token为char*
     void nextToken(char* token);

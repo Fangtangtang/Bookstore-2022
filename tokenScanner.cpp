@@ -24,9 +24,25 @@ bool TokenScanner::hasMoreTokens() {
     else return true;
 }
 
+void TokenScanner::nextToken(std::string &str) {
+    while (input[tokenStart] == ' ') {
+        ++tokenStart;
+        if(tokenStart==length-1) break;
+    }
+    tokenEnd=tokenStart;
+    while (input[tokenEnd] != ' ') {
+        if(tokenEnd==length-1) break;
+        ++tokenEnd;
+    }
+    str = input.substr(tokenStart, tokenEnd);
+    updatePos();
+}
 void TokenScanner::nextToken(char *token) {
     //前导空格
-    while (input[tokenStart] == ' ') ++tokenStart;
+    while (input[tokenStart] == ' ') {
+        ++tokenStart;
+        if(tokenStart==length-1) break;
+    }
     tokenEnd=tokenStart;
     while (input[tokenEnd] != ' ') {
         if(tokenEnd==length-1) break;

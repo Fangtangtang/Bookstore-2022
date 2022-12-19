@@ -10,8 +10,8 @@
 #include "linkList.h"
 #include <string>
 
-//权限 符号常量 对应{0} {1} {3} {7}
-enum Privilege{visitor,customer,clerk,host};
+//权限 符号常量 对应 {无} {0} {1} {3} {7}
+enum Privilege{none,visitor,customer,clerk,host};
 
 //key:ID
 struct ID {
@@ -67,11 +67,12 @@ public:
 
     //注册账户 {0} register [UserID] [Password] [Username]
     //游客注册 权限为{1} ID不可和已有的重复
+    //ID== error
     void Register(std::string &UserID,std::string &Password,std::string & Username);
 
     //创建帐户 {3} useradd [UserID] [Password] [Privilege] [Username]
     //高权限用户创建低权限账号
-    void AddUser(std::string &UserID, std::string &Password,int Privilege ,std::string & Username);
+    void AddUser(char* UserID, char* Password,int Privilege ,char* Username);
 
     //删除账户 {7} delete [UserID]
     //仅{7}
@@ -81,13 +82,14 @@ public:
     //如果当前帐户权限等级为 {7} 则可以省略 [CurrentPassword]（登录栈中用？）
     void ChangePassword(std::string&UserID,std::string&CurrentPassword,std::string&NewPassword);
 
+    //查找帐户
+    std::pair<Account,bool> FindAccount(char* UserID);
+
 private:
     //储存账户信息的块状链表
     //类中用（）会和声明函数歧义
     LinkList<ID,ID,Account> accountList{"account_information"};
 
-    //查找帐户
-    Account FindAccount(const std::string &UserID);
 
 };
 #endif //BOOKSTORE_ACCOUNT_H

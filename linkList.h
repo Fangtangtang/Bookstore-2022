@@ -248,6 +248,7 @@ private:
     struct HeadNode {
         long next = 0;
         int count=0;
+        double sum=0;
     };
 
     //数据块

@@ -7,24 +7,27 @@
 #define BOOKSTORE_BOOK_H
 
 #include "linkList.h"
+#include "tokenScanner.h"
+#include "error.h"
 #include <string>
+#include <cstring>
 
 struct ISBN {
     char bookISBN[21]={'\0'};
 
     ISBN();
 
-    ISBN(char* id);
+    ISBN(char* isbn);
 
-    ~ISBN();
+    ~ISBN()=default;
 
-    bool operator>(const ISBN &id) const;
+    bool operator>(const ISBN &isbn) const;
 
-    bool operator==(const ISBN &id) const;
+    bool operator==(const ISBN &isbn) const;
 
-    bool operator>=(const ISBN &id) const;
+    bool operator>=(const ISBN &isbn) const;
 
-    ISBN &operator=(const ISBN &id);
+    ISBN &operator=(const ISBN &isbn);
 
 };
 
@@ -33,17 +36,17 @@ struct Name {
 
     Name();
 
-    Name(char* id);
+    Name(char* name1);
 
-    ~Name();
+    ~Name()=default;
 
-    bool operator>(const Name &id) const;
+    bool operator>(const Name &name1) const;
 
-    bool operator==(const Name &id) const;
+    bool operator==(const Name &name1) const;
 
-    bool operator>=(const Name &id) const;
+    bool operator>=(const Name &name1) const;
 
-    Name &operator=(const Name &id);
+    Name &operator=(const Name &name1);
 
 };
 
@@ -52,17 +55,17 @@ struct Author {
 
     Author();
 
-    Author(char* id);
+    Author(char* author1);
 
-    ~Author();
+    ~Author()=default;
 
-    bool operator>(const Author &id) const;
+    bool operator>(const Author &author1) const;
 
-    bool operator==(const Author &id) const;
+    bool operator==(const Author &author1) const;
 
-    bool operator>=(const Author &id) const;
+    bool operator>=(const Author &author1) const;
 
-    Author &operator=(const Author &id);
+    Author &operator=(const Author &author1);
 
 };
 
@@ -72,17 +75,17 @@ struct Keyword{
 
     Keyword();
 
-    Keyword(char* id);
+    Keyword(char* keyword1);
 
-    ~Keyword();
+    ~Keyword()=default;
 
-    bool operator>(const Keyword &id) const;
+    bool operator>(const Keyword &keyword1) const;
 
-    bool operator==(const Keyword &id) const;
+    bool operator==(const Keyword &keyword1) const;
 
-    bool operator>=(const Keyword &id) const;
+    bool operator>=(const Keyword &keyword1) const;
 
-    Keyword &operator=(const Keyword &id);
+    Keyword &operator=(const Keyword &keyword1);
 };
 
 //以name优先排序的key
@@ -99,6 +102,8 @@ struct Name_IBSN{
 
     Name_IBSN &operator=(const Name_IBSN &id);
 
+    Name GetIndex();
+
 };
 
 //以author优先排序的key
@@ -114,6 +119,8 @@ struct Author_IBSN{
     bool operator>=(const Author_IBSN &id) const;
 
     Author_IBSN &operator=(const Author_IBSN &id);
+
+    Author GetIndex();
 };
 
 //以keyword(单个)优先排序的key
@@ -183,7 +190,7 @@ public:
 
     //购买图书 {1} buy [ISBN] [Quantity]
     //减少库存
-    void Buy();
+    void Buy(TokenScanner &tokenScanner);
 
     //选择图书 {3} select [ISBN]
     void Select();

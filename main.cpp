@@ -88,14 +88,17 @@ void ProcessLine(std::string input,
         accountManager.Register(tokenScanner);
         success = true;
     }
+    //修改密码
     if (cmd == "passwd") {
         accountManager.ChangePassword(tokenScanner, user);
         success = true;
     }
+    //创建账户
     if (cmd == "useradd") {
         accountManager.AddUser(tokenScanner, user.privilege);
         success = true;
     }
+    //删除账户
     if (cmd == "delete") {
         if (user.privilege != host) error("Invalid");
         char *userID;
@@ -107,5 +110,10 @@ void ProcessLine(std::string input,
         accountManager.DeleteUser(id);
         success = true;
     }
-    
+    //购买图书
+    if(cmd=="buy"){
+        bookManager.Buy(tokenScanner);
+        success= true;
+    }
+
 }

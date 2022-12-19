@@ -39,7 +39,6 @@ ID::~ID() = default;
 
 //Account---------------------------------------------------
 
-
 //AccountManager--------------------------------------------
 void AccountManager::InitialAccount() {
     char root[5] = "root", name[5] = "sjtu";

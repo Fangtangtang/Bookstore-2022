@@ -132,7 +132,7 @@ public:
     }
 
     //Delete
-    bool Delete(Key key, Value ele) {
+    bool Delete(Key key) {
         long iter = headNode1.next;
         BlockNode blockNode;
         Head head1;
@@ -143,7 +143,7 @@ public:
         }
         if (iter == 0) return false;
         blockNode = ReadNode(iter);
-        bool b = blockNode.Delete(ele);
+        bool b = blockNode.Delete(key);
         if (!b) return false;
         if (blockNode.NodeHead.size < blockSize / 2) {
             Head preHead, nextHead;
@@ -173,10 +173,12 @@ public:
                 }
                 return true;
             }
+            index indexSign;
             if (preHead.size > blockSize / 2) {
                 preNode = ReadNode(blockNode.NodeHead.pre);
                 blockNode.Insert(preNode.NodeHead.max, preNode.Array[preNode.NodeHead.size - 1]);
-                preNode.Delete(preNode.Array[preNode.NodeHead.size - 1]);
+
+                preNode.Delete(preNode.Array[preNode.NodeHead.size - 1].GetKey(indexSign));
                 WriteNode(preNode, blockNode.NodeHead.pre);
                 WriteNode(blockNode, iter);
                 return true;
@@ -184,7 +186,7 @@ public:
             if (nextHead.size > blockSize / 2) {
                 nextNode = ReadNode(blockNode.NodeHead.next);
                 blockNode.Insert(nextNode.NodeHead.min, nextNode.Array[0]);
-                nextNode.Delete(nextNode.Array[0]);
+                nextNode.Delete(nextNode.Array[0].GetKey(indexSign));
                 WriteNode(nextNode, blockNode.NodeHead.next);
                 WriteNode(blockNode, iter);
                 return true;
@@ -316,10 +318,11 @@ private:
         }
 
         //Delete
-        bool Delete(const Value &ele) {
+        bool Delete(const Key &key) {
             int i = 0;
+            index indexSign;
             while (i < NodeHead.size) {
-                if (Array[i] == ele) break;
+                if (Array[i].GetKey(indexSign) == key) break;
                 ++i;
             }
             if (i == NodeHead.size) return false;
@@ -329,7 +332,6 @@ private:
             }
             Value eleNull;
             Array[NodeHead.size] = eleNull;
-            index indexSign;
             NodeHead.min = Array[0].GetKey(indexSign);
             NodeHead.max = Array[NodeHead.size - 1].GetKey(indexSign);
             return true;

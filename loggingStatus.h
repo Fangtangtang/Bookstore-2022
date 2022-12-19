@@ -7,6 +7,7 @@
 
 //用vector方便修改信息
 #include <vector>
+#include <algorithm>
 #include "account.h"
 #include "tokenScanner.h"
 #include "error.h"
@@ -18,7 +19,7 @@ public:
     //登出
     void Logout(TokenScanner &tokenScanner,CurrentAccount &user);
 
-
+    bool Find(ID id);
 private:
     //登录用户ID栈
     std::vector<ID> IDVector;

@@ -66,7 +66,7 @@ void ProcessLine(std::string input,
     TokenScanner tokenScanner(input);
     //读入命令
     std::string cmd;
-    bool success= false;
+    bool success = false;
     tokenScanner.nextToken(cmd);
     if (cmd == " ") return;
     if (cmd == "quit" || cmd == "exit") {
@@ -76,29 +76,36 @@ void ProcessLine(std::string input,
     //登录账户
     if (cmd == "su") {
         loggingStatus.Su(tokenScanner, user, accountManager);
-        success= true;
+        success = true;
     }
     //登出
     if (cmd == "logout") {
-       loggingStatus.Logout(tokenScanner,user);
-       success= true;
+        loggingStatus.Logout(tokenScanner, user);
+        success = true;
     }
     //注册账户
-    if(cmd=="register"){
+    if (cmd == "register") {
         accountManager.Register(tokenScanner);
-        success= true;
+        success = true;
     }
-    if(cmd=="passwd"){
-        accountManager.ChangePassword(tokenScanner,user);
-        success= true;
+    if (cmd == "passwd") {
+        accountManager.ChangePassword(tokenScanner, user);
+        success = true;
     }
-    if(cmd=="useradd"){
-        accountManager.AddUser(tokenScanner,user.privilege);
-        success= true;
+    if (cmd == "useradd") {
+        accountManager.AddUser(tokenScanner, user.privilege);
+        success = true;
     }
-    if(cmd=="delete"){
-        if(user.privilege!=host) error("Invalid");
-        accountManager.DeleteUser(tokenScanner);
-        success=true;
+    if (cmd == "delete") {
+        if (user.privilege != host) error("Invalid");
+        char *userID;
+        if (tokenScanner.hasMoreTokens()) tokenScanner.nextToken(userID);
+        else error("Invalid");
+        if (tokenScanner.hasMoreTokens()) error("Invalid");
+        ID id(userID);
+        if (loggingStatus.Find(id))error("Invalid");
+        accountManager.DeleteUser(id);
+        success = true;
     }
+    
 }

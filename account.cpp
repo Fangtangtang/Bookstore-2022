@@ -135,19 +135,14 @@ void AccountManager::CreateAccount(char *UserID, char *password, Privilege privi
     std::pair<Account, bool> pair = accountList.Find(id, iter);
     if (pair.second) error("Invalid");//ID已存在
     Account newAccount;
-    newAccount.userID=id;
-    newAccount.privilege=privilege;
-    strcpy(newAccount.password,password);
-    strcpy(newAccount.name,name);
-    accountList.Insert(id,newAccount);
+    newAccount.userID = id;
+    newAccount.privilege = privilege;
+    strcpy(newAccount.password, password);
+    strcpy(newAccount.name, name);
+    accountList.Insert(id, newAccount);
 }
 
-void AccountManager::DeleteUser(TokenScanner &tokenScanner) {
-     char *userID;
-    if (tokenScanner.hasMoreTokens()) tokenScanner.nextToken(userID);
-    else error("Invalid");
-    if(tokenScanner.hasMoreTokens()) error("Invalid");
-    ID id(userID);
-    accountList.Delete(id,)
+void AccountManager::DeleteUser(ID id) {
+    if (!accountList.Delete(id)) error("Invalid");
 }
 

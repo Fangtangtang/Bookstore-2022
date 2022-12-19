@@ -59,11 +59,12 @@ struct Account {
 
     bool operator>=(const Account &id) const;
 
+    Account &operator=(const std::pair<Account, bool>& account);
 
     //获取key
-    ID GetKey(ID id) ;
+    ID GetKey(ID id) const ;
 
-    void Print();
+//    void Print();
 
 };
 

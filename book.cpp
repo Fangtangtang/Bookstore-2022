@@ -99,20 +99,99 @@ bool Keyword::operator>=(const Keyword &keyword1) const {
 Keyword &Keyword::operator=(const Keyword &keyword1) = default;
 
 //Name_IBSN----------------------------------------------
-bool Name_IBSN::operator>(const Name_IBSN &id) const {
-    return false;
+//name优先排序 IBSN次优先
+bool Name_IBSN::operator>(const Name_IBSN &right) const {
+    if (name > right.name || (name == right.name && bookISBN > right.bookISBN))return true;
+    else return false;
 }
 
-bool Name_IBSN::operator==(const Name_IBSN &id) const {
-    return false;
+//ISBN唯一
+bool Name_IBSN::operator==(const Name_IBSN &right) const {
+    return bookISBN == right.bookISBN;
 }
 
-bool Name_IBSN::operator>=(const Name_IBSN &id) const {
-    return false;
+bool Name_IBSN::operator>=(const Name_IBSN &right) const {
+    return !(right > *this);
 }
 
-Name_IBSN &Name_IBSN::operator=(const Name_IBSN &id) =default;
+Name_IBSN &Name_IBSN::operator=(const Name_IBSN &right) = default;
 
-Name Name_IBSN::GetIndex() {
+Name Name_IBSN::GetIndex() const {
     return name;
 }
+
+//Author_IBSN--------------------------------------------------
+
+bool Author_IBSN::operator>(const Author_IBSN &right) const {
+    if (author > right.author || (author == right.author && bookISBN > right.bookISBN))return true;
+    else return false;
+}
+
+bool Author_IBSN::operator==(const Author_IBSN &right) const {
+    return bookISBN == right.bookISBN;
+}
+
+bool Author_IBSN::operator>=(const Author_IBSN &right) const {
+    return !(right > *this);
+}
+
+Author_IBSN &Author_IBSN::operator=(const Author_IBSN &right) = default;
+
+Author Author_IBSN::GetIndex() const {
+    return author;
+}
+
+//Keyword_ISBN--------------------------------------------------
+
+bool Keyword_ISBN::operator>(const Keyword_ISBN &right) const {
+    if (keyword > right.keyword || (keyword == right.keyword && bookISBN > right.bookISBN))return true;
+    else return false;
+}
+
+bool Keyword_ISBN::operator==(const Keyword_ISBN &right) const {
+    return bookISBN == right.bookISBN;
+}
+
+bool Keyword_ISBN::operator>=(const Keyword_ISBN &right) const {
+    return !(right > *this);
+}
+
+Keyword_ISBN &Keyword_ISBN::operator=(const Keyword_ISBN &right) = default;
+
+Keyword Keyword_ISBN::GetIndex() const {
+    return keyword;
+}
+
+//Book---------------------------------------------------------
+bool Book::operator>(const Book &right) const {
+    return bookISBN>right.bookISBN;
+}
+
+bool Book::operator==(const Book &right) const {
+    return bookISBN==right.bookISBN;
+}
+
+bool Book::operator>=(const Book &right) const {
+    return bookISBN>=right.bookISBN;
+}
+
+Name_IBSN Book::GetKey(Name name1) const {
+    Name_IBSN tmp;
+    tmp.name=name;
+    tmp.bookISBN=bookISBN;
+    return tmp;
+}
+
+Author_IBSN Book::GetKey(Author author1) const {
+    Author_IBSN tmp;
+    tmp.author=author;
+    tmp.bookISBN=bookISBN;
+    return tmp;
+}
+
+Keyword_ISBN Book::GetKey(Keyword keyword1) {
+    Keyword_ISBN tmp;
+    tmp.keyword=
+}
+
+

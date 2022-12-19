@@ -2,7 +2,6 @@
 // Created by 房诗涵 on 2022/12/10.
 //
 #include "account.h"
-#include "linkList.h"
 #include <string>
 #include <cstring>
 
@@ -38,6 +37,27 @@ ID ID::GetIndex() {
 ID::~ID() = default;
 
 //Account---------------------------------------------------
+
+bool Account::operator>(const Account &id) const {
+    return userID>id.userID;
+}
+
+bool Account::operator==(const Account &id) const {
+    return userID==id.userID;
+}
+
+bool Account::operator>=(const Account &id) const {
+    return userID>=id.userID;
+}
+
+Account &Account::operator=(const std::pair<Account, bool>& account) {
+    *this = account.first;
+    return *this;
+}
+
+ID Account::GetKey(ID id) const {
+    return userID;
+}
 
 //AccountManager--------------------------------------------
 void AccountManager::InitialAccount() {

@@ -94,15 +94,15 @@ struct Name_IBSN{
 
     ISBN bookISBN;
 
-    bool operator>(const Name_IBSN &id) const;
+    bool operator>(const Name_IBSN &right) const;
 
-    bool operator==(const Name_IBSN &id) const;
+    bool operator==(const Name_IBSN &right) const;
 
-    bool operator>=(const Name_IBSN &id) const;
+    bool operator>=(const Name_IBSN &right) const;
 
-    Name_IBSN &operator=(const Name_IBSN &id);
+    Name_IBSN &operator=(const Name_IBSN &right);
 
-    Name GetIndex();
+    Name GetIndex() const;
 
 };
 
@@ -112,15 +112,15 @@ struct Author_IBSN{
 
     ISBN bookISBN;
 
-    bool operator>(const Author_IBSN &id) const;
+    bool operator>(const Author_IBSN &right) const;
 
-    bool operator==(const Author_IBSN &id) const;
+    bool operator==(const Author_IBSN &right) const;
 
-    bool operator>=(const Author_IBSN &id) const;
+    bool operator>=(const Author_IBSN &right) const;
 
-    Author_IBSN &operator=(const Author_IBSN &id);
+    Author_IBSN &operator=(const Author_IBSN &right);
 
-    Author GetIndex();
+    Author GetIndex() const;
 };
 
 //以keyword(单个)优先排序的key
@@ -129,13 +129,15 @@ struct Keyword_ISBN{
 
     ISBN bookISBN;
 
-    bool operator>(const Keyword_ISBN &id) const;
+    bool operator>(const Keyword_ISBN &right) const;
 
-    bool operator==(const Keyword_ISBN &id) const;
+    bool operator==(const Keyword_ISBN &right) const;
 
-    bool operator>=(const Keyword_ISBN &id) const;
+    bool operator>=(const Keyword_ISBN &right) const;
 
-    Keyword_ISBN &operator=(const Keyword_ISBN &id);
+    Keyword_ISBN &operator=(const Keyword_ISBN &right);
+
+    Keyword GetIndex() const;
 };
 
 struct Book {
@@ -153,18 +155,16 @@ struct Book {
 
     double price=0;
 
-    //基于不同key插入时 在同key大小比较基于IBSN
-    //double_index linklist?
-    bool operator>(const Book &id) const;
+    bool operator>(const Book &right) const;
 
-    bool operator==(const Book &id) const;
+    bool operator==(const Book &right) const;
 
-    bool operator>=(const Book &id) const;
+    bool operator>=(const Book &right) const;
 
     //获取name优先排序的key 用Book中的信息生成对应的key
-    Name_IBSN GetKey(Name name1);
+    Name_IBSN GetKey(Name name1) const;
 
-    Author_IBSN GetKey(Author author1);
+    Author_IBSN GetKey(Author author1) const;
 
     Keyword_ISBN GetKey(Keyword keyword1);
 
@@ -217,8 +217,8 @@ private:
     //long 对应book在book_information地址
     LinkList<Keyword,Keyword_ISBN,long> keywordList{"book_keyword"};
 
-    //查找帐户
-    Book FindBook(const std::string &UserID);
+    //查找
+    Book FindBook(const std::string &);
 
 };
 #endif //BOOKSTORE_BOOK_H

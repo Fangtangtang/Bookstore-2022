@@ -10,9 +10,6 @@
 //程序首次运行时自主执行所需的初始化操作
 bool Initialize();
 
-//添加初始用户
-void AddInitialAccount(AccountManager &accountManager);
-
 void ProcessLine(std::string input,
                  AccountManager &accountManager,
                  BookManager &bookManager,
@@ -24,7 +21,7 @@ int main() {
     bool initialize_flag = Initialize();
     //接入系统的对象
     AccountManager accountManager;
-    if (initialize_flag) AddInitialAccount(accountManager);
+    if (initialize_flag) accountManager.InitialAccount();
     BookManager bookManager;
     LogManager logManager;
     //登录栈
@@ -60,11 +57,6 @@ bool Initialize() {
     }
 }
 
-void AddInitialAccount(AccountManager &accountManager) {
-    char root[5] = "root", name[5] = "sjtu";
-    accountManager.AddUser(root, name, host, root);
-}
-
 void ProcessLine(std::string input,
                  AccountManager &accountManager,
                  BookManager &bookManager,
@@ -74,6 +66,7 @@ void ProcessLine(std::string input,
     TokenScanner tokenScanner(input);
     //读入命令
     std::string cmd;
+    bool success= false;
     tokenScanner.nextToken(cmd);
     if (cmd == " ") return;
     if (cmd == "quit" || cmd == "exit") {
@@ -82,57 +75,30 @@ void ProcessLine(std::string input,
     }
     //登录账户
     if (cmd == "su") {
-//        loggingStatus.Su
-        char *userID, *password;
-        tokenScanner.nextToken(userID);
-        //输入ID对应的account
-        Account suAccount;
-        std::pair<Account, bool> pair = accountManager.FindAccount(userID);
-        if (!pair.second) error("Invalid");
-        suAccount = pair.first;
-        //输入了密码
-        if (tokenScanner.hasMoreTokens()) {
-            tokenScanner.nextToken(password);
-            //密码错误
-            if (password != suAccount.password) error("Invalid");
-            if (tokenScanner.hasMoreTokens()) error("Invalid");
-            //登录成功 加入登录栈
-            //更新当前user
-            loggingStatus.Login(suAccount);
-            user.privilege = suAccount.privilege;
-            user.userID = suAccount.userID;
-            return;
-        }
-        //未输入密码
-        if (user.privilege > suAccount.privilege) {
-            //登录成功 加入登录栈
-            //更新当前user
-            loggingStatus.Login(suAccount);
-            user.privilege = suAccount.privilege;
-            user.userID = suAccount.userID;
-            return;
-        }
-        error("Invalid");
+        loggingStatus.Su(tokenScanner, user, accountManager);
+        success= true;
     }
     //登出
     if (cmd == "logout") {
-        if (tokenScanner.hasMoreTokens()) error("Invalid");
-        //当前无登录用户
-        if (user.privilege == none) error("Invalid");
-        loggingStatus.Logout();
-        //更新当前user
-        user = loggingStatus.Flush();
-        return;
+       loggingStatus.Logout(tokenScanner,user);
+       success= true;
     }
     //注册账户
     if(cmd=="register"){
-        char *userID,*password,*name;
-        if(tokenScanner.hasMoreTokens()) tokenScanner.nextToken(userID);
-        else error("Invalid");
-        if(tokenScanner.hasMoreTokens()) tokenScanner.nextToken(password);
-        else error("Invalid");
-        if(tokenScanner.hasMoreTokens()) tokenScanner.nextToken(name);
-        else error("Invalid");
-        if(tokenScanner.hasMoreTokens()) error("Invalid");
+        accountManager.Register(tokenScanner);
+        success= true;
+    }
+    if(cmd=="passwd"){
+        accountManager.ChangePassword(tokenScanner,user);
+        success= true;
+    }
+    if(cmd=="useradd"){
+        accountManager.AddUser(tokenScanner,user.privilege);
+        success= true;
+    }
+    if(cmd=="delete"){
+        if(user.privilege!=host) error("Invalid");
+        accountManager.DeleteUser(tokenScanner);
+        success=true;
     }
 }

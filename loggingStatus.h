@@ -9,29 +9,24 @@
 #include <vector>
 #include "account.h"
 #include "tokenScanner.h"
-
-struct CurrentAccount{
-    ID userID;
-    Privilege privilege=none;
-};
+#include "error.h"
 
 class LoggingStatus{
 public:
-    void Su()
+    void Su(TokenScanner &tokenScanner,CurrentAccount &user,AccountManager &accountManager);
 
     //登出
-    void Logout();
+    void Logout(TokenScanner &tokenScanner,CurrentAccount &user);
+
+
+private:
+    //登录用户ID栈
+    std::vector<ID> IDVector;
+
+    //登录用户权限栈
+    std::vector<Privilege> privilegeVector;
 
     //返回当前账户信息
     CurrentAccount Flush();
-private:
-    //登录用户ID栈
-    std::vector<ID> IDStack;
-
-    //登录用户权限栈
-    std::vector<Privilege> privilegeStack;
-
-    //登录
-    void Login(Account);
 };
 #endif //BOOKSTORE_LOGGINGSTATUS_H

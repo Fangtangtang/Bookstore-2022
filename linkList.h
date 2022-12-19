@@ -10,7 +10,8 @@
 
 //LinkList类 模板
 //index 检索索引 ；key 排序标记 ；value 数组元素
-//GetKey(index indexSign) 重载函数 获取元素基于index的key index作为函数选择标记
+//key: GetIndex()
+//value:GetKey(index indexSign) 重载函数 获取元素基于index的key index作为函数选择标记
 template<class index, class Key, class Value>
 class LinkList {
     static constexpr int blockSize = 1024;
@@ -232,6 +233,46 @@ public:
         }
     }
 
+    //以index寻找元素
+    //iter 找到元素的地址
+    std::pair<Value, bool> Find(const index &index1,long &iter){
+        iter = headNode1.next;
+        Head head1;
+        Value value;
+        while (iter != 0) {
+            head1 = ReadHead(iter);
+            if (index1 >= head1.min.GetIndex() && head1.max.GetIndex() >= index1)break;
+            iter = head1.next;
+        }
+        if(iter==0){
+            return std::make_pair(value, false);
+        }
+        BlockNode blockNode = ReadNode(iter);
+        int i = 0;
+        while (!(index1 == (blockNode.Array[i].GetKey(index1)).GetIndex())) {
+            ++i;
+            if (i == blockNode.NodeHead.size) {
+                return std::make_pair(value, false);
+            }
+        }
+        //数组元素地址
+        iter=iter+sizeof (Head)+i* sizeof(Value);
+        return std::make_pair(blockNode.Array[i], true);
+    }
+
+    //读取一个数组元素
+    Value ReadValue(long iter) {
+        Value value;
+        r_w_LinkList.seekg(iter);
+        r_w_LinkList.read(reinterpret_cast<char *>(&value), sizeof(value));
+        return value;
+    }
+
+    void WriteValue(Value value, const long &iter){
+        r_w_LinkList.seekp(iter);
+        r_w_LinkList.write(reinterpret_cast<char *> (&value), sizeof(Value));
+    }
+
 private:
 
     //块链节点头部
@@ -317,13 +358,7 @@ private:
         return nodeHead;
     }
 
-    //读取一个数组元素
-    Value ReadValue(long iter) {
-        Value value;
-        r_w_LinkList.seekg(iter);
-        r_w_LinkList.read(reinterpret_cast<char *>(&value), sizeof(value));
-        return value;
-    }
+
 
     //Write 块链信息
     void WriteNode(BlockNode blockNode, const long &iter) {
@@ -336,6 +371,7 @@ private:
         r_w_LinkList.seekp(iter);
         r_w_LinkList.write(reinterpret_cast<char *> (&nodeHead), sizeof(Head));
     }
+
 
     //BreakNode
     void BreakNode(const long &iter, BlockNode &blockNode) {

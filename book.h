@@ -11,6 +11,8 @@
 #include "error.h"
 #include <string>
 #include <cstring>
+#include <vector>
+#include <algorithm>
 
 struct ISBN {
     char bookISBN[21]={'\0'};
@@ -79,6 +81,8 @@ struct Keyword{
 
     Keyword(char* keyword1);
 
+    Keyword(const std::string& keyword1);
+
     ~Keyword()=default;
 
     bool operator>(const Keyword &keyword1) const;
@@ -91,36 +95,36 @@ struct Keyword{
 };
 
 //以name优先排序的key
-struct Name_IBSN{
+struct Name_ISBN{
     Name name;
 
     ISBN bookISBN;
 
-    bool operator>(const Name_IBSN &right) const;
+    bool operator>(const Name_ISBN &right) const;
 
-    bool operator==(const Name_IBSN &right) const;
+    bool operator==(const Name_ISBN &right) const;
 
-    bool operator>=(const Name_IBSN &right) const;
+    bool operator>=(const Name_ISBN &right) const;
 
-    Name_IBSN &operator=(const Name_IBSN &right);
+    Name_ISBN &operator=(const Name_ISBN &right);
 
     Name GetIndex() const;
 
 };
 
 //以author优先排序的key
-struct Author_IBSN{
+struct Author_ISBN{
     Author author;
 
     ISBN bookISBN;
 
-    bool operator>(const Author_IBSN &right) const;
+    bool operator>(const Author_ISBN &right) const;
 
-    bool operator==(const Author_IBSN &right) const;
+    bool operator==(const Author_ISBN &right) const;
 
-    bool operator>=(const Author_IBSN &right) const;
+    bool operator>=(const Author_ISBN &right) const;
 
-    Author_IBSN &operator=(const Author_IBSN &right);
+    Author_ISBN &operator=(const Author_ISBN &right);
 
     Author GetIndex() const;
 };
@@ -169,9 +173,9 @@ struct Book {
     ISBN GetKey(ISBN isbn) const;
 
     //获取name优先排序的key 用Book中的信息生成对应的key
-    Name_IBSN GetKey(Name name1) const;
+    Name_ISBN GetKey(Name name1) const;
 
-    Author_IBSN GetKey(Author author1) const;
+    Author_ISBN GetKey(Author author1) const;
 
 //    Keyword_ISBN GetKey(Keyword keyword1);
 
@@ -220,8 +224,8 @@ public:
     void Buy(TokenScanner &tokenScanner);
 
     //选择图书 {3} select [ISBN]
-    //返回选中图书的ISBN
-    ISBN Select(TokenScanner &tokenScanner);
+    //返回选中图书的ISBN和位置
+    std::pair<ISBN,long> Select(TokenScanner &tokenScanner);
 
     //修改当前选中图书信息
     //修改ISBN影响排序 delete add 且修改keyword文件
@@ -229,7 +233,7 @@ public:
     //修改keyword需把原先从文件中删干净
     //分成多个修改函数
     //modify_flag
-    void Modify(TokenScanner &tokenScanner,ISBN &isbn);
+    void Modify(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
 
     //图书进货{3} import [Quantity] [TotalCost]
     //修改quantity
@@ -241,10 +245,10 @@ private:
     LinkList<ISBN,ISBN,Book> bookList{"book_information"};
 
     //name排序
-    LinkList<Name,Name_IBSN,Book> nameList{"book_name"};
+    LinkList<Name,Name_ISBN,Book> nameList{"book_name"};
 
     //author排序
-    LinkList<Author,Author_IBSN,Book> authorList{"book_author"};
+    LinkList<Author,Author_ISBN,Book> authorList{"book_author"};
 
     //单个keyword排序
     //index:Keyword key:Keyword_ISBN value:keyword+ISBN+location
@@ -261,6 +265,26 @@ private:
     //创建仅拥有ISBN的book 只需修改bookList
     void AddBook(ISBN isbn);
 
-    void ReinsertISBN();
+    //将keywords切片为string型 查重
+    static void CutKeywords(std::string str,std::vector<std::string>&keywordGroup);
+
+    //book:新信息 foreIter:原地址 iter:新地址
+    void ReinsertISBN(Book book,const long &foreIter,long &iter);
+
+    void ReinsertName(Book book,Name_ISBN key);
+
+    void ReinsertAuthor(Book book,Author_ISBN key);
+
+    //iter!=0 book新位置
+    void ReinsertKeyword(const long &iter,char *foreKeywords,ISBN foreISBN,ISBN isbn,std::vector<std::string>keywordGroup);
+
+    void RewriteISBN(Book book,const long &foreIter);
+
+    void RewriteName(Book book,const Name_ISBN &key);
+
+    void RewriteAuthor(Book book,const Author_ISBN &key);
+
+
+
 };
 #endif //BOOKSTORE_BOOK_H

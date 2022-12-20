@@ -8,7 +8,6 @@
 //用vector方便修改信息
 #include <vector>
 #include <algorithm>
-#include <map>
 #include "account.h"
 #include "book.h"
 #include "tokenScanner.h"
@@ -21,11 +20,11 @@ public:
     //登出
     void Logout(TokenScanner &tokenScanner,CurrentAccount &user);
 
-    //记录用户和选中的图书(删插覆盖）
-    void SelectBook(ISBN isbn,const CurrentAccount& user);
+    //记录用户和选中的图书
+    void SelectBook(std::pair<ISBN,long> pair);
 
-    //寻找ID对应的书
-    ISBN FindSelected(const ID& id);
+    //寻找当前选中的书
+    std::pair<ISBN,long>  FindSelected();
 
     bool Find(const ID& id);
 private:
@@ -36,7 +35,7 @@ private:
     std::vector<Privilege> privilegeVector;
 
     //ID->selectedBook
-    std::map<ID,ISBN> selectBook;
+    std::vector<std::pair<ISBN,long>> bookVector;
 
     //返回当前账户信息
     CurrentAccount Flush();

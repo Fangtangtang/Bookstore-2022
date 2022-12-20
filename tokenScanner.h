@@ -38,6 +38,8 @@ public:
     //解析”char*"
     void Quote(char* token);
 
+    //给出剩余部分的string
+    std::string ShowRest();
 private:
     std::string input;
     //input 长度

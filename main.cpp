@@ -118,18 +118,21 @@ void ProcessLine(std::string input,
         success= true;
     }
     if(cmd=="select"){
+        if(user.privilege<=clerk) error("Invalid");
         //找书或新建
-        ISBN bookISBN=bookManager.Select(tokenScanner);
+        std::pair<ISBN,long> pair=bookManager.Select(tokenScanner);
+//        ISBN bookISBN=pair.first;
+//        long iter=pair.second;//
         //修改用户选书信息
-        loggingStatus.SelectBook(bookISBN,user);
+        loggingStatus.SelectBook(pair);
         success= true;
     }
     if(cmd=="modify"){
         //用户权限
         if(user.privilege<=clerk) error("Invalid");
         //选中图书
-        ISBN bookISBN=loggingStatus.FindSelected(user.userID);
-        bookManager.Modify(tokenScanner,bookISBN);
+        std::pair<ISBN,long> pair=loggingStatus.FindSelected();
+        bookManager.Modify(tokenScanner,pair);
         success= true;
     }
 }

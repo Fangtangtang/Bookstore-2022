@@ -126,6 +126,10 @@ void TokenScanner::Quote(char *token) {
     UpdatePos();
 }
 
+std::string TokenScanner::ShowRest() {
+    return input.substr(tokenStart,length);
+}
+
 //private
 void TokenScanner::UpdatePos() {
     tokenStart = tokenEnd + 1;
@@ -135,6 +139,7 @@ void TokenScanner::UpdatePos() {
     }
     tokenEnd = tokenStart;
 }
+
 
 
 

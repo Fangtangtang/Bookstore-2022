@@ -18,8 +18,12 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
         if (password != suAccount.password) error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //登录成功 加入登录栈
+        ISBN isbn;//空图书
+        long l=0;
+        std::pair<ISBN,long> nullBook=std::make_pair(isbn,l);
         IDVector.push_back(suAccount.userID);
         privilegeVector.push_back(suAccount.privilege);
+        bookVector.push_back(nullBook);
         //更新当前user
         user.privilege = suAccount.privilege;
         user.userID = suAccount.userID;
@@ -45,25 +49,19 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
     //修改登录栈
     IDVector.pop_back();
     privilegeVector.pop_back();
+    bookVector.pop_back();
     //更新当前user
     user = Flush();
 }
 
-void LoggingStatus::SelectBook(ISBN isbn, const CurrentAccount& user) {
-     auto iter=selectBook.find(user.userID);
-     //用户有选过书 删掉
-     if(iter!=selectBook.end()) selectBook.erase(iter);
-     //用户当前选择
-     selectBook[user.userID]=isbn;
+void LoggingStatus::SelectBook(std::pair<ISBN,long> pair) {
+    bookVector.pop_back();
+    bookVector.push_back(pair);
 }
 
-ISBN LoggingStatus::FindSelected(const ID& id) {
-    auto iter=selectBook.find(id);
-    //有选中
-    if(iter!=selectBook.end()) return iter->second;
-    else error("Invalid");
+std::pair<ISBN,long>  LoggingStatus::FindSelected() {
+    return bookVector.back();
 }
-
 
 CurrentAccount LoggingStatus::Flush() {
     CurrentAccount tmp;
@@ -76,9 +74,11 @@ CurrentAccount LoggingStatus::Flush() {
     return tmp;
 }
 
-bool LoggingStatus::Find(const ID& id) {
+bool LoggingStatus::Find(const ID &id) {
     return (std::find(IDVector.begin(), IDVector.end(), id) != IDVector.end());
 }
+
+
 
 
 

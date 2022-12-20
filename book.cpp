@@ -88,6 +88,11 @@ Keyword::Keyword(char *keyword1) {
     strcpy(keyword, keyword1);
 }
 
+Keyword::Keyword(const std::string &keyword1) {
+    const char *tmp = keyword1.c_str();
+    strcpy(keyword, tmp);
+}
+
 bool Keyword::operator>(const Keyword &keyword1) const {
     return strcmp(keyword, keyword1.keyword) > 0;
 }
@@ -104,44 +109,44 @@ Keyword &Keyword::operator=(const Keyword &keyword1) = default;
 
 //Name_IBSN----------------------------------------------
 //name优先排序 IBSN次优先
-bool Name_IBSN::operator>(const Name_IBSN &right) const {
+bool Name_ISBN::operator>(const Name_ISBN &right) const {
     if (name > right.name || (name == right.name && bookISBN > right.bookISBN))return true;
     else return false;
 }
 
 //ISBN唯一
-bool Name_IBSN::operator==(const Name_IBSN &right) const {
+bool Name_ISBN::operator==(const Name_ISBN &right) const {
     return bookISBN == right.bookISBN;
 }
 
-bool Name_IBSN::operator>=(const Name_IBSN &right) const {
+bool Name_ISBN::operator>=(const Name_ISBN &right) const {
     return !(right > *this);
 }
 
-Name_IBSN &Name_IBSN::operator=(const Name_IBSN &right) = default;
+Name_ISBN &Name_ISBN::operator=(const Name_ISBN &right) = default;
 
-Name Name_IBSN::GetIndex() const {
+Name Name_ISBN::GetIndex() const {
     return name;
 }
 
 //Author_IBSN--------------------------------------------------
 
-bool Author_IBSN::operator>(const Author_IBSN &right) const {
+bool Author_ISBN::operator>(const Author_ISBN &right) const {
     if (author > right.author || (author == right.author && bookISBN > right.bookISBN))return true;
     else return false;
 }
 
-bool Author_IBSN::operator==(const Author_IBSN &right) const {
+bool Author_ISBN::operator==(const Author_ISBN &right) const {
     return bookISBN == right.bookISBN;
 }
 
-bool Author_IBSN::operator>=(const Author_IBSN &right) const {
+bool Author_ISBN::operator>=(const Author_ISBN &right) const {
     return !(right > *this);
 }
 
-Author_IBSN &Author_IBSN::operator=(const Author_IBSN &right) = default;
+Author_ISBN &Author_ISBN::operator=(const Author_ISBN &right) = default;
 
-Author Author_IBSN::GetIndex() const {
+Author Author_ISBN::GetIndex() const {
     return author;
 }
 
@@ -188,15 +193,15 @@ ISBN Book::GetKey(ISBN isbn) const {
     return bookISBN;
 }
 
-Name_IBSN Book::GetKey(Name name1) const {
-    Name_IBSN tmp;
+Name_ISBN Book::GetKey(Name name1) const {
+    Name_ISBN tmp;
     tmp.name = name;
     tmp.bookISBN = bookISBN;
     return tmp;
 }
 
-Author_IBSN Book::GetKey(Author author1) const {
-    Author_IBSN tmp;
+Author_ISBN Book::GetKey(Author author1) const {
+    Author_ISBN tmp;
     tmp.author = author;
     tmp.bookISBN = bookISBN;
     return tmp;
@@ -257,20 +262,20 @@ void BookManager::Update(Book book, long iter) {
     //覆盖bookList中原有信息
     bookList.WriteValue(book, iter);
     //nameList
-    Name_IBSN nameIbsn;
+    Name_ISBN nameIbsn;
     nameIbsn.name = book.name;
     nameIbsn.bookISBN = book.bookISBN;
     nameList.Find(nameIbsn, iter);
     nameList.WriteValue(book, iter);
     //authorList
-    Author_IBSN authorIbsn;
+    Author_ISBN authorIbsn;
     authorIbsn.author = book.author;
     authorIbsn.bookISBN = book.bookISBN;
     authorList.Find(authorIbsn, iter);
     authorList.WriteValue(book, iter);
 }
 
-ISBN BookManager::Select(TokenScanner &tokenScanner) {
+std::pair<ISBN, long> BookManager::Select(TokenScanner &tokenScanner) {
     char *ibsn;
     long iter;
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(ibsn);
@@ -279,7 +284,7 @@ ISBN BookManager::Select(TokenScanner &tokenScanner) {
     ISBN bookISBN(ibsn);
     //不存在 新建
     if (!bookList.Find(bookISBN, iter).second) AddBook(bookISBN);
-    return bookISBN;
+    return std::make_pair(bookISBN, iter);
 }
 
 void BookManager::AddBook(ISBN isbn) {
@@ -288,72 +293,163 @@ void BookManager::AddBook(ISBN isbn) {
     bookList.Insert(isbn, newBook);
 }
 
-void BookManager::Modify(TokenScanner &tokenScanner,ISBN &isbn) {
-    if(!tokenScanner.HasMoreTokens()) error("Invalid");
-    Book modify;
-    std::string type;
-    char* token;
+void BookManager::Modify(TokenScanner &tokenScanner, std::pair<ISBN, long> pair) {
+    if (!tokenScanner.HasMoreTokens()) error("Invalid");
+    Book modify;//修改后信息
+    std::string type, str;
+    char *token;
+    std::vector<std::string> keywordGroup;
     //是否已经有该类修改
-    bool change_ISBN= false;
-    bool change_name= false;
-    bool change_author= false;
-    bool change_keyword= false;
-    bool change_price= false;
+    bool change_ISBN = false;
+    bool change_name = false;
+    bool change_author = false;
+    bool change_keyword = false;
+    bool change_price = false;
     //重新插入
-    bool reinsert_ISBN_flag= false;
-    bool reinsert_name_flag= false;
-    bool reinsert_author_flag= false;
-    bool reinsert_keywords_flag= false;
+    bool reinsert_ISBN_flag = false;
+    bool reinsert_name_flag = false;
+    bool reinsert_author_flag = false;
+    bool reinsert_keywords_flag = false;
     //改写
-    bool rewrite_ISBN_flag= false;
-    bool rewrite_name_flag= false;
-    bool rewrite_author_flag= false;
-    bool rewrite_keywords_flag= false;
+    bool rewrite_ISBN_flag = false;
+    bool rewrite_name_flag = false;
+    bool rewrite_author_flag = false;
+    //收集modify信息
     while (tokenScanner.HasMoreTokens()) {
         //修改信息类型
         tokenScanner.TakeType(type);
-        if(type=="ISBN"){
-            if(change_ISBN) error("Invalid");
+        if (type == "ISBN") {
+            if (change_ISBN) error("Invalid");
             tokenScanner.NextToken(token);
             ISBN newISBN(token);
             //不可重复
-            if(newISBN==isbn) error("Invalid");
-            modify.bookISBN=newISBN;
+            if (newISBN == pair.first) error("Invalid");
+            modify.bookISBN = newISBN;
             //设置已修改
-            change_ISBN= true;
+            change_ISBN = true;
             //设置flag
-            reinsert_ISBN_flag= true;
-            reinsert_name_flag= true;
-            reinsert_author_flag= true;
-            reinsert_keywords_flag= true;
+            reinsert_ISBN_flag = true;
+            reinsert_name_flag = true;
+            reinsert_author_flag = true;
+            reinsert_keywords_flag = true;
         }
-        if(type=="name"){
-            if(change_name) error("Invalid");
+        if (type == "name") {
+            if (change_name) error("Invalid");
             tokenScanner.Quote(token);
             Name newName(token);
-            modify.name =newName;
-            change_name= true;
-            reinsert_name_flag= true;
-            rewrite_ISBN_flag= true;
-            rewrite_author_flag= true;
+            modify.name = newName;
+            change_name = true;
+            reinsert_name_flag = true;
+            rewrite_ISBN_flag = true;
+            rewrite_author_flag = true;
         }
-        if(type=="author"){
-            if(change_author)error("Invalid");
+        if (type == "author") {
+            if (change_author)error("Invalid");
             tokenScanner.Quote(token);
             Author newAuthor(token);
-            modify.author=newAuthor;
-            change_author= true;
-            reinsert_author_flag= true;
-            rewrite_ISBN_flag= true;
-            rewrite_name_flag= true;
+            modify.author = newAuthor;
+            change_author = true;
+            reinsert_author_flag = true;
+            rewrite_ISBN_flag = true;
+            rewrite_name_flag = true;
         }
         //keywords整段 在修改keyword文件时切片
-        if(type=="keyword"){
-
+        if (type == "keyword") {
+            if (change_keyword) error("Invalid");
+            tokenScanner.Quote(token);
+            //keywords过长
+            if (strlen(token) > 60) error("Invalid");
+            str = token;
+            //keywords切片查重
+            CutKeywords(str, keywordGroup);
+            strcpy(modify.keywords, token);
+            change_keyword = true;
+            rewrite_ISBN_flag = true;
+            rewrite_name_flag = true;
+            rewrite_author_flag = true;
+            reinsert_keywords_flag = true;
         }
-        if(type=="price"){
-
+        if (type == "price") {
+            if (change_price)error("Invalid");
+            tokenScanner.NextToken(modify.price);
+            change_price = true;
+            rewrite_ISBN_flag = true;
+            rewrite_name_flag = true;
+            rewrite_author_flag = true;
         }
     }
+    //原书
+    Book selected = bookList.ReadValue(pair.second);
+    long iterISBN = 0;//book_information中位置
+    // 重插或重写
+    if (reinsert_ISBN_flag) {
+        ReinsertISBN(modify, pair.second, iterISBN);
+    } else {
+        if (rewrite_ISBN_flag) RewriteISBN(modify, pair.second);
+    }
+    Name_ISBN nameKey;
+    nameKey.name = selected.name;
+    nameKey.bookISBN = selected.bookISBN;
+    if (reinsert_name_flag) {
+        ReinsertName(modify, nameKey);
+    } else {
+        if (rewrite_name_flag) RewriteName(modify, nameKey);
+    }
+    Author_ISBN authorKey;
+    authorKey.author = selected.author;
+    authorKey.bookISBN = selected.bookISBN;
+    if (reinsert_author_flag) {
+        ReinsertAuthor(modify, authorKey);
+    } else {
+        if (rewrite_author_flag) RewriteAuthor(modify, authorKey);
+    }
+    char *foreKeywords = selected.keywords;
+    if (reinsert_keywords_flag) ReinsertKeyword(iterISBN, foreKeywords, selected.bookISBN, pair.first, keywordGroup);
+}
+
+void BookManager::CutKeywords(std::string str, std::vector<std::string> &keywordGroup) {
+    int start = 0;
+    std::string keyword;
+    int end = 0;
+    while (true) {
+        while (str[end] != '|' && end < str.length()) {
+            ++end;
+        }
+        keyword = str.substr(start, end - 1);
+        if (std::find(keywordGroup.begin(), keywordGroup.end(), keyword) != keywordGroup.end())
+            error("Invalid");
+        keywordGroup.push_back(keyword);
+        if (end >= str.length()) break;
+        ++end;
+        start = end;
+    }
+}
+
+void BookManager::ReinsertISBN(Book book, const long &foreIter, long &iter) {
+    bookList.Delete(book.bookISBN);//优化空间 直接由foreIter
+    bookList.Insert(book.bookISBN, book);
+    bookList.Find(book.bookISBN, iter);//优化空间 直接从insert获取？
+}
+
+void BookManager::ReinsertName(Book book, Name_ISBN key) {
+    nameList.Delete(key);
+    key.name = book.name;
+    key.bookISBN = book.bookISBN;
+    nameList.Insert(key, book);
+}
+
+void BookManager::ReinsertAuthor(Book book, Author_ISBN key) {
+    authorList.Delete(key);
+    key.author = book.author;
+    key.bookISBN = book.bookISBN;
+    authorList.Insert(key, book);
+}
+
+void BookManager::ReinsertKeyword(const long &iter,
+                                  char *foreKeywords,
+                                  ISBN foreISBN, ISBN isbn,
+                                  std::vector<std::string> keywordGroup) {
 
 }
+
+

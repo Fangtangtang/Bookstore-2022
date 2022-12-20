@@ -29,6 +29,8 @@ struct ISBN {
 
     ISBN &operator=(const ISBN &isbn);
 
+    ISBN GetIndex();
+
 };
 
 struct Name {
@@ -164,6 +166,8 @@ struct Book {
 
     Book &operator=(const std::pair<Book, bool>& pair);
 
+    ISBN GetKey(ISBN isbn) const;
+
     //获取name优先排序的key 用Book中的信息生成对应的key
     Name_IBSN GetKey(Name name1) const;
 
@@ -173,9 +177,6 @@ struct Book {
 
     //打印book所有信息
     void Print();
-
-    //修改信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
-    void Modify(std::string &CurrentPassword,std::string &NewPassword);
 
 };
 
@@ -219,7 +220,7 @@ public:
     void Buy(TokenScanner &tokenScanner);
 
     //选择图书 {3} select [ISBN]
-    void Select();
+    void Select(TokenScanner &tokenScanner);
 
     //修改图书信息
     void Modify();
@@ -246,5 +247,12 @@ private:
     //查找
     Book FindBook(const std::string &);
 
+    //更新信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
+    //传入iter为boolList中地址
+    //增减库存 不动keyword文件
+    void Update(Book book,long iter);
+
+    //创建仅拥有ISBN的book 只需修改bookList
+    void AddBook(ISBN isbn);
 };
 #endif //BOOKSTORE_BOOK_H

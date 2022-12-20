@@ -94,8 +94,8 @@ public:
     //如果当前帐户权限等级为 {7} 则可以省略 [CurrentPassword]（登录栈中用？）
     void ChangePassword(TokenScanner &tokenScanner,CurrentAccount &user);
 
-//    //查找帐户
-//    std::pair<Account,bool> FindAccount(char* UserID);
+    //查找帐户
+    std::pair<Account,bool> FindAccount(char* UserID);
 
 private:
     //储存账户信息的块状链表

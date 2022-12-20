@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 
 //LinkList类 模板
 //index 检索索引 ；key 排序标记 ；value 数组元素
@@ -235,15 +236,43 @@ public:
         }
     }
 
-    //以index寻找元素
-    //iter 找到元素的地址
-    std::pair<Value, bool> Find(const index &index1,long &iter){
+//    //以index寻找元素
+//    //iter 找到元素的地址
+//    std::pair<Value, bool> Find(const index &index1,long &iter){
+//        iter = headNode1.next;
+//        Head head1;
+//        Value value;
+//        while (iter != 0) {
+//            head1 = ReadHead(iter);
+//            if (index1 >= head1.min.GetIndex() && head1.max.GetIndex() >= index1)break;
+//            iter = head1.next;
+//        }
+//        if(iter==0){
+//            return std::make_pair(value, false);
+//        }
+//        BlockNode blockNode = ReadNode(iter);
+//        int i = 0;
+//        while (!(index1 == (blockNode.Array[i].GetKey(index1)).GetIndex())) {
+//            ++i;
+//            if (i == blockNode.NodeHead.size) {
+//                return std::make_pair(value, false);
+//            }
+//        }
+//        //数组元素地址
+//        iter=iter+sizeof (Head)+i* sizeof(Value);
+//        return std::make_pair(blockNode.Array[i], true);
+//    }
+
+    //基于key寻找value
+    //iter是value地址
+    std::pair<Value, bool> Find(const Key &key,long &iter){
         iter = headNode1.next;
         Head head1;
         Value value;
+        index indexSign;
         while (iter != 0) {
             head1 = ReadHead(iter);
-            if (index1 >= head1.min.GetIndex() && head1.max.GetIndex() >= index1)break;
+            if (key >= head1.min && head1.max>= key)break;
             iter = head1.next;
         }
         if(iter==0){
@@ -251,7 +280,7 @@ public:
         }
         BlockNode blockNode = ReadNode(iter);
         int i = 0;
-        while (!(index1 == (blockNode.Array[i].GetKey(index1)).GetIndex())) {
+        while (!(key == (blockNode.Array[i].GetKey(indexSign)))) {
             ++i;
             if (i == blockNode.NodeHead.size) {
                 return std::make_pair(value, false);

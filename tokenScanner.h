@@ -15,23 +15,28 @@ public:
 
     ~TokenScanner()=default;
 
-    void setInput(const std::string& str);
+    void SetInput(const std::string& str);
 
     //是否仍有输入
-    bool hasMoreTokens() ;
+    bool HasMoreTokens() ;
 
     //下一个合法token为string
-    void nextToken(std::string &str);
+    void NextToken(std::string &str);
 
     //下一个合法token为char*
-    void nextToken(char* token);
+    void NextToken(char* token);
 
     //下一个合法token为int
-    void nextToken(int &intNum);
+    void NextToken(int &intNum);
 
     //下一个合法token为double
-    void nextToken(double &doubleNum);
+    void NextToken(double &doubleNum);
 
+    //解析 -string=
+    void TakeType(std::string &str);
+
+    //解析”char*"
+    void Quote(char* token);
 
 private:
     std::string input;
@@ -41,7 +46,7 @@ private:
     int tokenStart=0,tokenEnd=0;
 
     //更新token头尾部所在位置
-    void updatePos();
+    void UpdatePos();
 };
 
 #endif //BOOKSTORE_TOKENSCANNER_H

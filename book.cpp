@@ -27,6 +27,10 @@ bool ISBN::operator>=(const ISBN &isbn) const {
 
 ISBN &ISBN::operator=(const ISBN &isbn) = default;
 
+ISBN ISBN::GetIndex() {
+    return *this;
+}
+
 //Name--------------------------------------------
 Name::Name() {
     memset(name, 0, sizeof(name));
@@ -180,6 +184,10 @@ Book &Book::operator=(const std::pair<Book, bool> &pair) {
     return *this;
 }
 
+ISBN Book::GetKey(ISBN isbn) const {
+    return bookISBN;
+}
+
 Name_IBSN Book::GetKey(Name name1) const {
     Name_IBSN tmp;
     tmp.name=name;
@@ -193,6 +201,7 @@ Author_IBSN Book::GetKey(Author author1) const {
     tmp.bookISBN=bookISBN;
     return tmp;
 }
+
 
 //BookLocation-----------------------------------------
 
@@ -221,3 +230,58 @@ Keyword_ISBN BookLocation::GetKey(Keyword_ISBN keywordIsbn) const {
 }
 
 //BookManager-----------------------------------
+void BookManager::Buy(TokenScanner &tokenScanner) {
+    char *bookISBN;
+    int quantity;
+    if(tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN);
+    else error("Invalid");
+    if(tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
+    else error("Invalid");
+    if(tokenScanner.HasMoreTokens()) error("Invalid");
+    double sum=0;
+    long iter;
+    std::pair<Book, bool>pair=bookList.Find(bookISBN,iter);
+    if(!pair.second) error("Invalid");//不存在
+    Book buyBook=pair.first;
+    //库存充足？
+    if(buyBook.quantity<quantity) error("Invalid");
+    sum=1.0*quantity*buyBook.price;
+    std::cout<<sum<<'\n';
+    //减少库存
+    buyBook.quantity-=quantity;
+    //写回文件（多个文件都要修改）
+    Update(buyBook,iter);
+}
+
+void BookManager::Update(Book book, long iter) {
+     //覆盖bookList中原有信息
+     bookList.WriteValue(book,iter);
+     //nameList
+     Name_IBSN nameIbsn;
+     nameIbsn.name=book.name;
+     nameIbsn.bookISBN=book.bookISBN;
+     nameList.Find(nameIbsn,iter);
+     nameList.WriteValue(book,iter);
+     //authorList
+     Author_IBSN authorIbsn;
+     authorIbsn.author=book.author;
+     authorIbsn.bookISBN=book.bookISBN;
+     authorList.Find(authorIbsn,iter);
+     authorList.WriteValue(book,iter);
+}
+
+void BookManager::Select(TokenScanner &tokenScanner) {
+     char *ibsn;
+     long iter;
+     if(tokenScanner.HasMoreTokens()) tokenScanner.NextToken(ibsn);
+     else error("Invalid");
+     if(tokenScanner.HasMoreTokens())error("Invalid");
+     ISBN bookISBN(ibsn);
+     if(!bookList.Find(bookISBN,iter).second) AddBook(bookISBN);
+}
+
+void BookManager::AddBook(ISBN isbn) {
+     Book newBook;
+     newBook.bookISBN=isbn;
+     bookList.Insert(isbn,newBook);
+}

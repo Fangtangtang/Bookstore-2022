@@ -1,11 +1,13 @@
 #include <iostream>
+#include <string>
+#include <iomanip>
 #include "account.h"
 #include "book.h"
 #include "log.h"
 #include "loggingStatus.h"
 #include "error.h"
 #include "tokenScanner.h"
-#include <string>
+
 
 //程序首次运行时自主执行所需的初始化操作
 bool Initialize();
@@ -28,6 +30,8 @@ int main() {
     LoggingStatus loggingStatus;
     //当前用户
     CurrentAccount user;
+    //浮点数输出精度设置
+    std::cout<<std::fixed<<std::setprecision(2);
     while (true) {
         try {
             std::string input;
@@ -67,10 +71,10 @@ void ProcessLine(std::string input,
     //读入命令
     std::string cmd;
     bool success = false;
-    tokenScanner.nextToken(cmd);
+    tokenScanner.NextToken(cmd);
     if (cmd == " ") return;
     if (cmd == "quit" || cmd == "exit") {
-        if (tokenScanner.hasMoreTokens()) error("Invalid");
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         exit(0);
     }
     //登录账户
@@ -102,9 +106,9 @@ void ProcessLine(std::string input,
     if (cmd == "delete") {
         if (user.privilege != host) error("Invalid");
         char *userID;
-        if (tokenScanner.hasMoreTokens()) tokenScanner.nextToken(userID);
+        if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(userID);
         else error("Invalid");
-        if (tokenScanner.hasMoreTokens()) error("Invalid");
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         ID id(userID);
         if (loggingStatus.Find(id))error("Invalid");
         accountManager.DeleteUser(id);
@@ -115,5 +119,11 @@ void ProcessLine(std::string input,
         bookManager.Buy(tokenScanner);
         success= true;
     }
+    if(cmd=="select"){
+        bookManager.Select(tokenScanner);
+        success= true;
+    }
+    if(cmd=="modify"){
 
+    }
 }

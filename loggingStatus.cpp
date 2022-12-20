@@ -5,18 +5,18 @@
 
 void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, AccountManager &accountManager) {
     char *userID, *password;
-    tokenScanner.nextToken(userID);
+    tokenScanner.NextToken(userID);
     //输入ID对应的account
     Account suAccount;
     std::pair<Account, bool> pair = accountManager.FindAccount(userID);
     if (!pair.second) error("Invalid");
     suAccount = pair.first;
     //输入了密码
-    if (tokenScanner.hasMoreTokens()) {
-        tokenScanner.nextToken(password);
+    if (tokenScanner.HasMoreTokens()) {
+        tokenScanner.NextToken(password);
         //密码错误
         if (password != suAccount.password) error("Invalid");
-        if (tokenScanner.hasMoreTokens()) error("Invalid");
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         //登录成功 加入登录栈
         IDVector.push_back(suAccount.userID);
         privilegeVector.push_back(suAccount.privilege);
@@ -39,9 +39,9 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
 }
 
 void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
-    if (tokenScanner.hasMoreTokens()) error("Invalid");
+    if (tokenScanner.HasMoreTokens()) error("Invalid");
     //当前无登录用户
-    if (user.privilege == none) error("Invalid");
+    if (IDVector.empty()) error("Invalid");
     //修改登录栈
     IDVector.pop_back();
     privilegeVector.pop_back();
@@ -51,8 +51,12 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
 
 CurrentAccount LoggingStatus::Flush() {
     CurrentAccount tmp;
-    tmp.privilege = privilegeVector.back();
-    tmp.userID = IDVector.back();
+    if (!IDVector.empty()) {
+        tmp.privilege = privilegeVector.back();
+        tmp.userID = IDVector.back();
+    } else {
+        tmp.privilege = none;
+    }
     return tmp;
 }
 

@@ -108,7 +108,7 @@ struct Name_ISBN{
 
     Name_ISBN &operator=(const Name_ISBN &right);
 
-    Name GetIndex() const;
+    Name GetIndex(Name) const;
 
 };
 
@@ -126,7 +126,7 @@ struct Author_ISBN{
 
     Author_ISBN &operator=(const Author_ISBN &right);
 
-    Author GetIndex() const;
+    Author GetIndex(Author) const;
 };
 
 //以keyword(单个)优先排序的key
@@ -143,7 +143,7 @@ struct Keyword_ISBN{
 
     Keyword_ISBN &operator=(const Keyword_ISBN &right);
 
-    Keyword GetIndex() const;
+    Keyword GetIndex(Keyword) const;
 };
 
 struct Book {
@@ -169,6 +169,12 @@ struct Book {
     bool operator>=(const Book &right) const;
 
     Book &operator=(const std::pair<Book, bool>& pair);
+
+    ISBN GetIndex(ISBN isbn) const;
+
+    Name GetIndex(Name name1) const;
+
+    Author GetIndex(Author author1) const;
 
     ISBN GetKey(ISBN isbn) const;
 
@@ -205,6 +211,9 @@ struct BookLocation{
 
     Keyword_ISBN GetKey(Keyword keywordIsbn) const;
 
+    Keyword GetIndex(Keyword)const;
+
+    void Print();
 };
 
 class BookManager{
@@ -217,7 +226,7 @@ public:
     //show (-ISBN=[ISBN] | -name="[BookName]" | -author="[Author]" | -keyword="[Keyword]")?
     //无参数 直接打表
     //需要4个函数满足不同key的检索
-    void Show();
+    void Show(TokenScanner &tokenScanner);
 
     //购买图书 {1} buy [ISBN] [Quantity]
     //减少库存
@@ -236,8 +245,8 @@ public:
     void Modify(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
 
     //图书进货{3} import [Quantity] [TotalCost]
-    //修改quantity
-    void Import();
+    //修改quantity(in ISBN,name,author)
+    void Import(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
 
 private:
     //类中用（）会和声明函数歧义
@@ -254,8 +263,8 @@ private:
     //index:Keyword key:Keyword_ISBN value:keyword+ISBN+location
     LinkList<Keyword,Keyword_ISBN,BookLocation> keywordList{"book_keyword"};
 
-    //查找
-    Book FindBook(const std::string &);
+//    //查找
+//    Book FindBook(const std::string &);
 
     //更新信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
     //传入iter为boolList中地址
@@ -269,20 +278,20 @@ private:
     static void CutKeywords(std::string str,std::vector<std::string>&keywordGroup);
 
     //book:新信息 foreIter:原地址 iter:新地址
-    void ReinsertISBN(Book book,const long &foreIter,long &iter);
+    void ReinsertISBN(const Book &book,const long &foreIter,long &iter);
 
-    void ReinsertName(Book book,Name_ISBN key);
+    void ReinsertName(const Book &book,Name_ISBN key);
 
-    void ReinsertAuthor(Book book,Author_ISBN key);
+    void ReinsertAuthor(const Book &book,Author_ISBN key);
 
     //iter!=0 book新位置
     void ReinsertKeyword(const long &iter,char *foreKeywords,ISBN foreISBN,ISBN isbn,std::vector<std::string>keywordGroup);
 
-    void RewriteISBN(Book book,const long &foreIter);
+    void RewriteISBN(const Book &book,const long &foreIter);
 
-    void RewriteName(Book book,const Name_ISBN &key);
+    void RewriteName(const Book &book,const Name_ISBN &key);
 
-    void RewriteAuthor(Book book,const Author_ISBN &key);
+    void RewriteAuthor(const Book &book,const Author_ISBN &key);
 
     //将string型keyword转为Keyword
     static Keyword MakeKeyword(const std::string &string);

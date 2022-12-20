@@ -8,10 +8,11 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 //LinkList类 模板
 //index 检索索引 ；key 排序标记 ；value 数组元素
-//key: GetIndex()
+//key: GetIndex(index)
 //value:GetKey(index indexSign) 重载函数 获取元素基于index的key index作为函数选择标记
 template<class index, class Key, class Value>
 class LinkList {
@@ -46,15 +47,15 @@ public:
 
     ~LinkList() = default;
 
-    void printList() {
+    void PrintList() {
         BlockNode blockNode;
         long iter = headNode1.next;//第一个节点
         while (iter != 0) {
-            std::cout << "####\n";
+//            std::cout << "####\n";
             blockNode = ReadNode(iter);
             for (int i = 0; i < blockNode.NodeHead.size; ++i)
-                blockNode.Array[i].print();
-            std::cout << '\n';
+                blockNode.Array[i].Print();
+//            std::cout << '\n';
             iter = blockNode.NodeHead.next;
         }
     }
@@ -208,60 +209,66 @@ public:
         Head head1;
         while (iter != 0) {
             head1 = ReadHead(iter);
-            if (index1 >= head1.min.GetIndex() && head1.max.GetIndex() >= index1)break;
+            if (index1 >= head1.min.GetIndex(index1) && head1.max.GetIndex(index1) >= index1)break;
             iter = head1.next;
         }
         if (iter == 0) {
-            std::cout << "null";
+            std::cout << "/n";
             return;
         }
         BlockNode blockNode = ReadNode(iter);
         int i = 0;
-        while (!(index1 == blockNode.Array[i].GetIndex())) {
+        while (!(index1 == blockNode.Array[i].GetIndex(index1))) {
             ++i;
             if (i == blockNode.NodeHead.size) {
-                std::cout << "null";
+                std::cout << "/n";
                 return;//没有元素
             }
         }
         while (true) {
-            blockNode.Array[i].print();
+            blockNode.Array[i].Print();
 //            std::cout << blockNode.Array[i].GetValue() << " ";
             ++i;
             if (i == blockNode.NodeHead.size) {//结束一个块
                 blockNode = ReadNode(blockNode.NodeHead.next);
                 i = 0;
             }
-            if (!(index1 == blockNode.Array[i].GetIndex())) return;//找完
+            if (!(index1 == blockNode.Array[i].GetIndex(index1))) return;//找完
         }
     }
 
-//    //以index寻找元素
-//    //iter 找到元素的地址
-//    std::pair<Value, bool> Find(const index &index1,long &iter){
-//        iter = headNode1.next;
-//        Head head1;
-//        Value value;
-//        while (iter != 0) {
-//            head1 = ReadHead(iter);
-//            if (index1 >= head1.min.GetIndex() && head1.max.GetIndex() >= index1)break;
-//            iter = head1.next;
-//        }
-//        if(iter==0){
-//            return std::make_pair(value, false);
-//        }
-//        BlockNode blockNode = ReadNode(iter);
-//        int i = 0;
-//        while (!(index1 == (blockNode.Array[i].GetKey(index1)).GetIndex())) {
-//            ++i;
-//            if (i == blockNode.NodeHead.size) {
-//                return std::make_pair(value, false);
-//            }
-//        }
-//        //数组元素地址
-//        iter=iter+sizeof (Head)+i* sizeof(Value);
-//        return std::make_pair(blockNode.Array[i], true);
-//    }
+    //以index寻找元素
+    //返回value数组
+    std::vector<Value> FindSubList(const index &index1){
+        std::vector<Value> vec;
+        long iter = headNode1.next;
+        Head head1;
+        while (iter != 0) {
+            head1 = ReadHead(iter);
+            if (index1 >= head1.min.GetIndex(index1) && head1.max.GetIndex(index1) >= index1)break;
+            iter = head1.next;
+        }
+        if (iter == 0) {
+            return vec;
+        }
+        BlockNode blockNode = ReadNode(iter);
+        int i = 0;
+        while (!(index1 == blockNode.Array[i].GetIndex(index1))) {
+            ++i;
+            if (i == blockNode.NodeHead.size) {
+                return vec;//没有元素
+            }
+        }
+        while (true) {
+            vec.push_back(blockNode.Array[i]);
+            ++i;
+            if (i == blockNode.NodeHead.size) {//结束一个块
+                blockNode = ReadNode(blockNode.NodeHead.next);
+                i = 0;
+            }
+            if (!(index1 == blockNode.Array[i].GetIndex(index1))) return vec;//找完
+        }
+    }
 
     //基于key寻找value
     //iter是value地址

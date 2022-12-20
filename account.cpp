@@ -34,7 +34,7 @@ bool ID::operator>=(const ID &id) const {
 
 ID &ID::operator=(const ID &id) = default;
 
-ID ID::GetIndex() {
+ID ID::GetIndex(ID) {
     return *this;
 }
 

@@ -31,7 +31,7 @@ int main() {
     //当前用户
     CurrentAccount user;
     //浮点数输出精度设置
-    std::cout<<std::fixed<<std::setprecision(2);
+    std::cout << std::fixed << std::setprecision(2);
     while (true) {
         try {
             std::string input;
@@ -113,26 +113,41 @@ void ProcessLine(std::string input,
         success = true;
     }
     //购买图书
-    if(cmd=="buy"){
+    if (cmd == "buy") {
         bookManager.Buy(tokenScanner);
-        success= true;
+        success = true;
     }
-    if(cmd=="select"){
-        if(user.privilege<=clerk) error("Invalid");
+    if (cmd == "select") {
+        if (user.privilege <= clerk) error("Invalid");
         //找书或新建
-        std::pair<ISBN,long> pair=bookManager.Select(tokenScanner);
+        std::pair<ISBN, long> pair = bookManager.Select(tokenScanner);
 //        ISBN bookISBN=pair.first;
 //        long iter=pair.second;//
         //修改用户选书信息
         loggingStatus.SelectBook(pair);
-        success= true;
+        success = true;
     }
-    if(cmd=="modify"){
+    if (cmd == "modify") {
         //用户权限
-        if(user.privilege<=clerk) error("Invalid");
+        if (user.privilege <= clerk) error("Invalid");
         //选中图书
-        std::pair<ISBN,long> pair=loggingStatus.FindSelected();
-        bookManager.Modify(tokenScanner,pair);
+        std::pair<ISBN, long> pair = loggingStatus.FindSelected();
+        bookManager.Modify(tokenScanner, pair);
+        success = true;
+    }
+    if (cmd == "import") {
+        if (user.privilege <= clerk) error("Invalid");
+        std::pair<ISBN, long> pair = loggingStatus.FindSelected();
+        bookManager.Import(tokenScanner, pair);
+        success = true;
+    }
+    if(cmd=="show"){
+        std::string str=tokenScanner.ShowRest();
+        if(!tokenScanner.HasMoreTokens()||str[0]=='-'){
+            bookManager.Show(tokenScanner);
+        }else{
+
+        }
         success= true;
     }
 }

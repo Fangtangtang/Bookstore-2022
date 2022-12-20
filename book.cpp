@@ -125,7 +125,7 @@ bool Name_ISBN::operator>=(const Name_ISBN &right) const {
 
 Name_ISBN &Name_ISBN::operator=(const Name_ISBN &right) = default;
 
-Name Name_ISBN::GetIndex() const {
+Name Name_ISBN::GetIndex(Name) const {
     return name;
 }
 
@@ -146,7 +146,7 @@ bool Author_ISBN::operator>=(const Author_ISBN &right) const {
 
 Author_ISBN &Author_ISBN::operator=(const Author_ISBN &right) = default;
 
-Author Author_ISBN::GetIndex() const {
+Author Author_ISBN::GetIndex(Author) const {
     return author;
 }
 
@@ -167,7 +167,7 @@ bool Keyword_ISBN::operator>=(const Keyword_ISBN &right) const {
 
 Keyword_ISBN &Keyword_ISBN::operator=(const Keyword_ISBN &right) = default;
 
-Keyword Keyword_ISBN::GetIndex() const {
+Keyword Keyword_ISBN::GetIndex(Keyword) const {
     return keyword;
 }
 
@@ -207,6 +207,23 @@ Author_ISBN Book::GetKey(Author author1) const {
     return tmp;
 }
 
+void Book::Print() {
+    std::string s_bookISBN = bookISBN.bookISBN, s_name = name.name, s_author = author.author, s_keywords = keywords;
+    std::cout << s_bookISBN << '\t' << s_name << '\t' << s_author << '\t' << s_keywords << '\t'
+              << price << '\t' << quantity << '\n';
+}
+
+ISBN Book::GetIndex(ISBN isbn) const {
+    return bookISBN;
+}
+
+Name Book::GetIndex(Name name1) const {
+    return name;
+}
+
+Author Book::GetIndex(Author author1) const {
+    return author;
+}
 
 //BookLocation-----------------------------------------
 
@@ -234,7 +251,62 @@ Keyword_ISBN BookLocation::GetKey(Keyword keywordIsbn) const {
     return tmp;
 }
 
+
+Keyword BookLocation::GetIndex(Keyword) const {
+    return keyword;
+}
+
 //BookManager-----------------------------------
+
+void BookManager::Show(TokenScanner &tokenScanner) {
+    //无附加 遍历bookList
+    if (!tokenScanner.HasMoreTokens()) {
+        bookList.PrintList();
+    }
+    bool success = false;
+    std::string type;
+    tokenScanner.TakeType(type);
+    char *token;
+    long iter;
+    if (type == "ISBN") {
+        tokenScanner.NextToken(token);
+        ISBN isbn(token);
+        std::pair<Book, bool> pair = bookList.Find(isbn, iter);
+        if (pair.second) pair.first.Print();
+        else error("Invalid");
+        success = true;
+    }
+    if (type == "name") {
+        tokenScanner.Quote(token);
+        Name index(token);
+        nameList.FindPrint(index);
+    }
+    if (type == "author") {
+        tokenScanner.Quote(token);
+        Author index(token);
+        authorList.FindPrint(index);
+    }
+    if (type == "keyword") {
+        tokenScanner.NextToken(token);
+        //构造时判断token是否合法
+        Keyword index(token);
+        //keyword对应bookLocation集合
+        std::vector<BookLocation> bookLocationGroup=keywordList.FindSubList(index);
+        //由location找book print
+        long bookIter;
+        if(bookLocationGroup.empty()) std::cout<<'\n';
+        else {
+            //遍历vector 找书 Print
+            for(auto & i : bookLocationGroup){
+                bookIter=i.location;
+                bookList.ReadValue(bookIter).Print();
+            }
+        }
+    }
+    if (!success) error("Invalid");
+    if (tokenScanner.HasMoreTokens()) error("Invalid");
+}
+
 void BookManager::Buy(TokenScanner &tokenScanner) {
     char *bookISBN;
     int quantity;
@@ -425,20 +497,20 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
     }
 }
 
-void BookManager::ReinsertISBN(Book book, const long &foreIter, long &iter) {
+void BookManager::ReinsertISBN(const Book &book, const long &foreIter, long &iter) {
     bookList.Delete(book.bookISBN);//优化空间 直接由foreIter
     bookList.Insert(book.bookISBN, book);
     bookList.Find(book.bookISBN, iter);//优化空间 直接从insert获取？
 }
 
-void BookManager::ReinsertName(Book book, Name_ISBN key) {
+void BookManager::ReinsertName(const Book &book, Name_ISBN key) {
     nameList.Delete(key);
     key.name = book.name;
     key.bookISBN = book.bookISBN;
     nameList.Insert(key, book);
 }
 
-void BookManager::ReinsertAuthor(Book book, Author_ISBN key) {
+void BookManager::ReinsertAuthor(const Book &book, Author_ISBN key) {
     authorList.Delete(key);
     key.author = book.author;
     key.bookISBN = book.bookISBN;
@@ -485,20 +557,43 @@ Keyword BookManager::MakeKeyword(const std::string &string) {
     return keyword;
 }
 
-void BookManager::RewriteISBN(Book book, const long &foreIter) {
+void BookManager::RewriteISBN(const Book &book, const long &foreIter) {
     bookList.WriteValue(book, foreIter);
 }
 
-void BookManager::RewriteName(Book book, const Name_ISBN &key) {
+void BookManager::RewriteName(const Book &book, const Name_ISBN &key) {
     long iter;
     nameList.Find(key, iter);
     nameList.WriteValue(book, iter);
 }
 
-void BookManager::RewriteAuthor(Book book, const Author_ISBN &key) {
+void BookManager::RewriteAuthor(const Book &book, const Author_ISBN &key) {
     long iter;
-    authorList.Find(key,iter);
-    authorList.WriteValue(book,iter);
+    authorList.Find(key, iter);
+    authorList.WriteValue(book, iter);
 }
 
+void BookManager::Import(TokenScanner &tokenScanner, std::pair<ISBN, long> pair) {
+    int quantity;
+    double totalCast;
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
+    else error("Invalid");
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(totalCast);
+    else error("Invalid");
+    if (tokenScanner.HasMoreTokens()) error("Invalid");
+    if (quantity == 0 || totalCast == 0) error("Invalid");
+    //图书信息
+    Book book = bookList.ReadValue(pair.second);
+    book.quantity += quantity;
+    //重写
+    RewriteISBN(book, pair.second);
+    Name_ISBN key1;
+    key1.name = book.name;
+    key1.bookISBN = book.bookISBN;
+    RewriteName(book, key1);
+    Author_ISBN key2;
+    key2.author = book.author;
+    key2.bookISBN = book.bookISBN;
+    RewriteAuthor(book, key2);
+}
 

@@ -203,7 +203,7 @@ struct BookLocation{
 
     BookLocation &operator=(const std::pair<BookLocation,bool> &pair);
 
-    Keyword_ISBN GetKey(Keyword_ISBN keywordIsbn) const;
+    Keyword_ISBN GetKey(Keyword keywordIsbn) const;
 
 };
 
@@ -284,7 +284,8 @@ private:
 
     void RewriteAuthor(Book book,const Author_ISBN &key);
 
-
+    //将string型keyword转为Keyword
+    static Keyword MakeKeyword(const std::string &string);
 
 };
 #endif //BOOKSTORE_BOOK_H

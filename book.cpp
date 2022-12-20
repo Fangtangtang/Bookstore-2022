@@ -227,7 +227,7 @@ BookLocation &BookLocation::operator=(const std::pair<BookLocation, bool> &pair)
     return *this;
 }
 
-Keyword_ISBN BookLocation::GetKey(Keyword_ISBN keywordIsbn) const {
+Keyword_ISBN BookLocation::GetKey(Keyword keywordIsbn) const {
     Keyword_ISBN tmp;
     tmp.keyword = keyword;
     tmp.bookISBN = bookISBN;
@@ -449,7 +449,56 @@ void BookManager::ReinsertKeyword(const long &iter,
                                   char *foreKeywords,
                                   ISBN foreISBN, ISBN isbn,
                                   std::vector<std::string> keywordGroup) {
+    //根据foreKeywords删去原有的所有keyword
+    //切出keyword
+    std::string str = foreKeywords;
+    std::vector<std::string> foreKeywordGroup;
+    CutKeywords(str, foreKeywordGroup);
+    Keyword keyword;
+    Keyword_ISBN key;
+    BookLocation bookLocation;
+    //循环删去
+    while (!foreKeywordGroup.empty()) {
+        keyword = MakeKeyword(foreKeywordGroup.back());
+        foreKeywordGroup.pop_back();
+        //makeKey
+        key.keyword = keyword;
+        key.bookISBN = foreISBN;
+        //delete
+        keywordList.Delete(key);
+    }
+    //添加新的keyword
+    while (!keywordGroup.empty()) {
+        keyword = MakeKeyword(keywordGroup.back());
+        keywordGroup.pop_back();
+        bookLocation.keyword = key.keyword = keyword;
+        bookLocation.bookISBN = key.bookISBN = isbn;
+        if (iter)bookLocation.location = iter;
+        keywordList.Insert(key, bookLocation);
+    }
+}
 
+Keyword BookManager::MakeKeyword(const std::string &string) {
+    const char *tmp = string.c_str();
+    Keyword keyword;
+    strcpy(keyword.keyword, tmp);
+    return keyword;
+}
+
+void BookManager::RewriteISBN(Book book, const long &foreIter) {
+    bookList.WriteValue(book, foreIter);
+}
+
+void BookManager::RewriteName(Book book, const Name_ISBN &key) {
+    long iter;
+    nameList.Find(key, iter);
+    nameList.WriteValue(book, iter);
+}
+
+void BookManager::RewriteAuthor(Book book, const Author_ISBN &key) {
+    long iter;
+    authorList.Find(key,iter);
+    authorList.WriteValue(book,iter);
 }
 
 

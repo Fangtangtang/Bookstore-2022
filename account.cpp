@@ -20,6 +20,10 @@ bool ID::operator>(const ID &id) const {
     return strcmp(userID, id.userID) > 0;
 }
 
+bool ID::operator<(const ID &id) const {
+    return strcmp(userID, id.userID) < 0;
+}
+
 bool ID::operator==(const ID &id) const {
     return !strcmp(userID, id.userID);
 }

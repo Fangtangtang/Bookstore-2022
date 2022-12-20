@@ -220,10 +220,16 @@ public:
     void Buy(TokenScanner &tokenScanner);
 
     //选择图书 {3} select [ISBN]
-    void Select(TokenScanner &tokenScanner);
+    //返回选中图书的ISBN
+    ISBN Select(TokenScanner &tokenScanner);
 
-    //修改图书信息
-    void Modify();
+    //修改当前选中图书信息
+    //修改ISBN影响排序 delete add 且修改keyword文件
+    //选择某些文件覆盖 某些重插
+    //修改keyword需把原先从文件中删干净
+    //分成多个修改函数
+    //modify_flag
+    void Modify(TokenScanner &tokenScanner,ISBN &isbn);
 
     //图书进货{3} import [Quantity] [TotalCost]
     //修改quantity
@@ -254,5 +260,7 @@ private:
 
     //创建仅拥有ISBN的book 只需修改bookList
     void AddBook(ISBN isbn);
+
+    void ReinsertISBN();
 };
 #endif //BOOKSTORE_BOOK_H

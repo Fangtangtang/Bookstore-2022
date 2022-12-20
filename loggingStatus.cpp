@@ -49,6 +49,22 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
     user = Flush();
 }
 
+void LoggingStatus::SelectBook(ISBN isbn, const CurrentAccount& user) {
+     auto iter=selectBook.find(user.userID);
+     //用户有选过书 删掉
+     if(iter!=selectBook.end()) selectBook.erase(iter);
+     //用户当前选择
+     selectBook[user.userID]=isbn;
+}
+
+ISBN LoggingStatus::FindSelected(const ID& id) {
+    auto iter=selectBook.find(id);
+    //有选中
+    if(iter!=selectBook.end()) return iter->second;
+    else error("Invalid");
+}
+
+
 CurrentAccount LoggingStatus::Flush() {
     CurrentAccount tmp;
     if (!IDVector.empty()) {
@@ -60,7 +76,9 @@ CurrentAccount LoggingStatus::Flush() {
     return tmp;
 }
 
-bool LoggingStatus::Find(ID id) {
+bool LoggingStatus::Find(const ID& id) {
     return (std::find(IDVector.begin(), IDVector.end(), id) != IDVector.end());
 }
+
+
 

@@ -28,6 +28,8 @@ struct ID {
 
     bool operator>(const ID &id) const;
 
+    bool operator<(const ID &id) const;
+
     bool operator==(const ID &id) const;
 
     bool operator>=(const ID &id) const;

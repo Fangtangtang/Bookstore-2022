@@ -8,7 +8,9 @@
 //用vector方便修改信息
 #include <vector>
 #include <algorithm>
+#include <map>
 #include "account.h"
+#include "book.h"
 #include "tokenScanner.h"
 #include "error.h"
 
@@ -19,13 +21,22 @@ public:
     //登出
     void Logout(TokenScanner &tokenScanner,CurrentAccount &user);
 
-    bool Find(ID id);
+    //记录用户和选中的图书(删插覆盖）
+    void SelectBook(ISBN isbn,const CurrentAccount& user);
+
+    //寻找ID对应的书
+    ISBN FindSelected(const ID& id);
+
+    bool Find(const ID& id);
 private:
     //登录用户ID栈
     std::vector<ID> IDVector;
 
     //登录用户权限栈
     std::vector<Privilege> privilegeVector;
+
+    //ID->selectedBook
+    std::map<ID,ISBN> selectBook;
 
     //返回当前账户信息
     CurrentAccount Flush();

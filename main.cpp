@@ -17,7 +17,7 @@ void ProcessLine(std::string input,
                  BookManager &bookManager,
                  LogManager &logManager,
                  LoggingStatus &loggingStatus,
-                 CurrentAccount user);
+                 CurrentAccount &user);
 
 int main() {
     bool initialize_flag = Initialize();
@@ -38,8 +38,6 @@ int main() {
             getline(std::cin, input);
             //EOF终止
             if (std::cin.eof()) return 0;
-            //todo
-            //verify the function
             ProcessLine(input, accountManager, bookManager, logManager, loggingStatus, user);
         } catch (ErrorException &ex) {
             std::cout << ex.getMessage() << std::endl;
@@ -66,7 +64,7 @@ void ProcessLine(std::string input,
                  BookManager &bookManager,
                  LogManager &logManager,
                  LoggingStatus &loggingStatus,
-                 CurrentAccount user) {
+                 CurrentAccount &user) {
     TokenScanner tokenScanner(input);
     //读入命令
     std::string cmd;
@@ -120,10 +118,18 @@ void ProcessLine(std::string input,
         success= true;
     }
     if(cmd=="select"){
-        bookManager.Select(tokenScanner);
+        //找书或新建
+        ISBN bookISBN=bookManager.Select(tokenScanner);
+        //修改用户选书信息
+        loggingStatus.SelectBook(bookISBN,user);
         success= true;
     }
     if(cmd=="modify"){
-
+        //用户权限
+        if(user.privilege<=clerk) error("Invalid");
+        //选中图书
+        ISBN bookISBN=loggingStatus.FindSelected(user.userID);
+        bookManager.Modify(tokenScanner,bookISBN);
+        success= true;
     }
 }

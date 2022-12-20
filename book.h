@@ -155,24 +155,50 @@ struct Book {
 
     double price=0;
 
+    //基于key做比较 重载实际不需要
     bool operator>(const Book &right) const;
 
     bool operator==(const Book &right) const;
 
     bool operator>=(const Book &right) const;
 
+    Book &operator=(const std::pair<Book, bool>& pair);
+
     //获取name优先排序的key 用Book中的信息生成对应的key
     Name_IBSN GetKey(Name name1) const;
 
     Author_IBSN GetKey(Author author1) const;
 
-    Keyword_ISBN GetKey(Keyword keyword1);
+//    Keyword_ISBN GetKey(Keyword keyword1);
 
     //打印book所有信息
     void Print();
 
     //修改信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
     void Modify(std::string &CurrentPassword,std::string &NewPassword);
+
+};
+
+//存于“book_keyword"中的元素，
+//包含单个keyword ISBN location
+struct BookLocation{
+
+    Keyword keyword;
+
+    ISBN bookISBN;
+
+    long location=0;
+
+    //基于key做比较 重载实际不需要
+    bool operator>(const BookLocation &right) const;
+
+    bool operator==(const BookLocation &right) const;
+
+    bool operator>=(const BookLocation &right) const;
+
+    BookLocation &operator=(const std::pair<BookLocation,bool> &pair);
+
+    Keyword_ISBN GetKey(Keyword_ISBN keywordIsbn) const;
 
 };
 
@@ -214,8 +240,8 @@ private:
     LinkList<Author,Author_IBSN,Book> authorList{"book_author"};
 
     //单个keyword排序
-    //long 对应book在book_information地址
-    LinkList<Keyword,Keyword_ISBN,long> keywordList{"book_keyword"};
+    //index:Keyword key:Keyword_ISBN value:keyword+ISBN+location
+    LinkList<Keyword,Keyword_ISBN,BookLocation> keywordList{"book_keyword"};
 
     //查找
     Book FindBook(const std::string &);

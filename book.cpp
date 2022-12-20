@@ -175,6 +175,11 @@ bool Book::operator>=(const Book &right) const {
     return bookISBN>=right.bookISBN;
 }
 
+Book &Book::operator=(const std::pair<Book, bool> &pair) {
+    *this=pair.first;
+    return *this;
+}
+
 Name_IBSN Book::GetKey(Name name1) const {
     Name_IBSN tmp;
     tmp.name=name;
@@ -189,9 +194,30 @@ Author_IBSN Book::GetKey(Author author1) const {
     return tmp;
 }
 
-Keyword_ISBN Book::GetKey(Keyword keyword1) {
-    Keyword_ISBN tmp;
-    tmp.keyword=
+//BookLocation-----------------------------------------
+
+bool BookLocation::operator>(const BookLocation &right) const {
+    return bookISBN>right.bookISBN;
 }
 
+bool BookLocation::operator==(const BookLocation &right) const {
+    return bookISBN==right.bookISBN;
+}
 
+bool BookLocation::operator>=(const BookLocation &right) const {
+    return bookISBN>=right.bookISBN;
+}
+
+BookLocation &BookLocation::operator=(const std::pair<BookLocation, bool> &pair) {
+    *this=pair.first;
+    return *this;
+}
+
+Keyword_ISBN BookLocation::GetKey(Keyword_ISBN keywordIsbn) const {
+    Keyword_ISBN tmp;
+    tmp.keyword=keyword;
+    tmp.bookISBN=bookISBN;
+    return tmp;
+}
+
+//BookManager-----------------------------------

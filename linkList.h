@@ -302,10 +302,11 @@ private:
         //Insert
         void Insert(const Key &key, const Value &ele) {
             int i = 0;
-            while (ele > Array[i] && i < NodeHead.size) {
+            index indexSign;
+            while (key > Array[i].GetKey(indexSign) && i < NodeHead.size) {
                 ++i;
             }
-            if (i < NodeHead.size && ele == Array[i]) return;
+            if (i < NodeHead.size && key == Array[i].GetKey(indexSign)) return;
             int move = NodeHead.size;
             while (move != i) {
                 Array[move] = Array[move - 1];

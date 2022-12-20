@@ -50,8 +50,8 @@ bool Account::operator>=(const Account &id) const {
     return userID>=id.userID;
 }
 
-Account &Account::operator=(const std::pair<Account, bool>& account) {
-    *this = account.first;
+Account &Account::operator=(const std::pair<Account, bool>& pair) {
+    *this = pair.first;
     return *this;
 }
 

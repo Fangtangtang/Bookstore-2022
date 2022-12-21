@@ -40,8 +40,11 @@ public:
 
     //给出剩余部分的string
     std::string ShowRest();
+
+    std::string ShowOperation();
 private:
     std::string input;
+    std::string operation;
     //input 长度
     int length=0;
     //每次截取token的始末位置

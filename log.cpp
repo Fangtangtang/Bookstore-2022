@@ -4,6 +4,15 @@
 
 #include "log.h"
 
+//Record--------------------------------------------------------
+int Record::GetKey(int) const {
+    return num;
+}
+
+void Record::Print() {
+std::cout<<userID.userID<<'\t'<<operation<<'\n';
+}
+
 //Transaction--------------------------------------------------
 int Transaction::GetKey(int) const {
     return num;
@@ -50,37 +59,58 @@ void TransactionManager::Expense(double cast) {
 
 void TransactionManager::ShowFinance(TokenScanner &tokenScanner) {
     if (!tokenScanner.HasMoreTokens()) {
-         if(financeCount==0) std::cout<<income<<'\n';
-         else std::cout<<'+'<<income<<'-'<<expense<<'\n';
+        if (financeCount == 0) std::cout << income << '\n';
+        else std::cout << '+' << income << '-' << expense << '\n';
         return;
     }
     int count;
     tokenScanner.NextToken(count);
-    if(tokenScanner.HasMoreTokens()) error("Invalid");
-    if(count==0) {
-        std::cout<<'\n';
+    if (tokenScanner.HasMoreTokens()) error("Invalid");
+    if (count == 0) {
+        std::cout << '\n';
         return;
     }
-    if(count>financeCount) error("Invalid");
+    if (count > financeCount) error("Invalid");
     //最后count笔交易
-    std::vector<Transaction> transactionGroup=transactionList.Traverse(financeCount-count+1);
-    double in=0,out=0;
+    std::vector<Transaction> transactionGroup = transactionList.Traverse(financeCount - count + 1);
+    double in = 0, out = 0;
     Transaction transaction;
-    while (!(transactionGroup.empty())){
-        transaction=transactionGroup.back();
-        if(transaction.income_flag){
-            in+=transaction.amount;
-        }else{
-            out+=transaction.amount;
+    while (!(transactionGroup.empty())) {
+        transaction = transactionGroup.back();
+        if (transaction.income_flag) {
+            in += transaction.amount;
+        } else {
+            out += transaction.amount;
         }
         transactionGroup.pop_back();
     }
-    std::cout<<'+'<<in<<'-'<<out<<'\n';
+    std::cout << '+' << in << '-' << out << '\n';
 }
 
-
-
-
-
-
 //LogManager---------------------------------------------------------
+LogManager::LogManager() {
+    HeadNode headNode = logList.ReadHeadNode();
+    count = headNode.count;
+}
+
+LogManager::~LogManager() {
+    logList.WriteHeadNode(count);
+}
+
+void LogManager::InitialLog() {
+    count = 0;
+}
+
+void LogManager::PrintLog() {
+    logList.PrintList();
+}
+
+void LogManager::AddLog(const ID &id, const std::string &str) {
+    ++count;
+    Record record;
+    record.num = count;
+    record.userID = id;
+    record.operation = str;
+    logList.Insert(count, record);
+}
+

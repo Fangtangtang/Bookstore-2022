@@ -35,6 +35,7 @@ void TokenScanner::NextToken(std::string &str) {
         ++tokenEnd;
     }
     str = input.substr(tokenStart, tokenEnd-1);
+    operation=operation+str+" ";
     UpdatePos();
 }
 void TokenScanner::NextToken(char *token) {
@@ -49,6 +50,7 @@ void TokenScanner::NextToken(char *token) {
         ++tokenEnd;
     }
     std::string str = input.substr(tokenStart, tokenEnd-1);
+    operation=operation+str+" ";
     const char *tmp = str.c_str();
     strcpy(token, tmp);
     UpdatePos();
@@ -61,9 +63,11 @@ void TokenScanner::NextToken(int &intNum) {
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0') {
             intNum += (input[tokenEnd] - '0');
             ++tokenEnd;
-            if(tokenEnd==length) return;
+            if(tokenEnd==length) break;
         } else error("Invalid");
     }
+    std::string str = input.substr(tokenStart, tokenEnd-1);
+    operation=operation+str+" ";
     UpdatePos();
 }
 
@@ -79,7 +83,7 @@ void TokenScanner::NextToken(double &doubleNum) {
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0') {
             doubleNum += (input[tokenEnd] - '0');
             ++tokenEnd;
-            if(tokenEnd==length) return;
+            if(tokenEnd==length) break;
         } else error("Invalid");
     }
     double mul = 0.1;
@@ -88,9 +92,11 @@ void TokenScanner::NextToken(double &doubleNum) {
             doubleNum += (input[tokenEnd] - '0') * mul;
             mul *= 0.1;
             ++tokenEnd;
-            if(tokenEnd==length) return;
+            if(tokenEnd==length) break;
         } else error("Invalid");
     }
+    std::string str = input.substr(tokenStart, tokenEnd-1);
+    operation=operation+str+" ";
     UpdatePos();
 }
 
@@ -108,6 +114,7 @@ void TokenScanner::TakeType(std::string &str) {
     }
     if(input[tokenEnd]!='=') error("Invalid");
     str = input.substr(tokenStart, tokenEnd-1);
+    operation=operation+"-"+str+"= ";
     UpdatePos();
 }
 
@@ -121,6 +128,7 @@ void TokenScanner::Quote(char *token) {
     }
     if(input[tokenEnd]!='"') error("Invalid");
     std::string str = input.substr(tokenStart, tokenEnd-1);
+    operation=operation+'"'+ str+'"'+" ";
     const char *tmp = str.c_str();
     strcpy(token, tmp);
     UpdatePos();
@@ -128,6 +136,10 @@ void TokenScanner::Quote(char *token) {
 
 std::string TokenScanner::ShowRest() {
     return input.substr(tokenStart,length);
+}
+
+std::string TokenScanner::ShowOperation() {
+    return operation;
 }
 
 //private

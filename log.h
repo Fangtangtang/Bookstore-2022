@@ -10,10 +10,19 @@
 #include "linkList.h"
 #include "tokenScanner.h"
 #include "error.h"
+#include "account.h"
 
 //一条操作记录
 struct Record{
-    //todo
+    int num;
+
+    ID userID;
+
+    std::string operation;
+
+    int GetKey(int) const;
+
+    void Print();
 };
 
 //一条交易记录
@@ -73,6 +82,8 @@ public:
     void InitialLog();
 
     void PrintLog();
+
+    void AddLog(const ID& id,const std::string &str);
 
 private:
     //历史操作总数

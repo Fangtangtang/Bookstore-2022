@@ -218,7 +218,7 @@ struct BookLocation{
 
 class BookManager{
 public:
-    BookManager();
+    BookManager()=default;
 
     ~BookManager()=default;
 

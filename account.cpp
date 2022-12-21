@@ -153,6 +153,7 @@ Privilege AccountManager::toPrivilege(int i) {
     if (i == 7) return host;
     if (i == 0) return visitor;
     error("Invalid");
+    return none;
 }
 
 void AccountManager::CreateAccount(char *UserID, char *password, Privilege privilege, char *name) {

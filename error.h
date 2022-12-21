@@ -7,12 +7,11 @@
 
 #include <string>
 #include <exception>
-#include <utility>
 
 class ErrorException : public std::exception {
 public:
     explicit ErrorException(std::string message) {
-        this->message = std::move(message);
+        this->message = message;
     }
 
     std::string getMessage() const{
@@ -28,8 +27,8 @@ private:
 // catch (ErrorException &ex) {
 //        std::cout << ex.getMessage() << std::endl;
 // }
-void error(std::string message) {
-    throw ErrorException(std::move(message));
+static void error(std::string message) {
+    throw ErrorException(message);
 }
 
 #endif //BOOKSTORE_ERROR_H

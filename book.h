@@ -230,7 +230,8 @@ public:
 
     //购买图书 {1} buy [ISBN] [Quantity]
     //减少库存
-    void Buy(TokenScanner &tokenScanner);
+    //返回总价
+    double Buy(TokenScanner &tokenScanner);
 
     //选择图书 {3} select [ISBN]
     //返回选中图书的ISBN和位置
@@ -246,7 +247,7 @@ public:
 
     //图书进货{3} import [Quantity] [TotalCost]
     //修改quantity(in ISBN,name,author)
-    void Import(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
+    double Import(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
 
 private:
     //类中用（）会和声明函数歧义
@@ -285,7 +286,7 @@ private:
     void ReinsertAuthor(const Book &book,Author_ISBN key);
 
     //iter!=0 book新位置
-    void ReinsertKeyword(const long &iter,char *foreKeywords,ISBN foreISBN,ISBN isbn,std::vector<std::string>keywordGroup);
+    void ReinsertKeyword(const long &iter,const char *foreKeywords,ISBN foreISBN,ISBN isbn,std::vector<std::string>keywordGroup);
 
     void RewriteISBN(const Book &book,const long &foreIter);
 

@@ -12,10 +12,11 @@
 //程序首次运行时自主执行所需的初始化操作
 bool Initialize();
 
-void ProcessLine(std::string input,
+void ProcessLine(const std::string& input,
                  AccountManager &accountManager,
                  BookManager &bookManager,
                  LogManager &logManager,
+                 TransactionManager &transactionManager,
                  LoggingStatus &loggingStatus,
                  CurrentAccount &user);
 
@@ -23,9 +24,14 @@ int main() {
     bool initialize_flag = Initialize();
     //接入系统的对象
     AccountManager accountManager;
-    if (initialize_flag) accountManager.InitialAccount();
     BookManager bookManager;
     LogManager logManager;
+    TransactionManager transactionManager;
+    if (initialize_flag) {
+        accountManager.InitialAccount();
+//        transactionManager.InitialTransation();
+//        logManager.InitialLog();
+    }
     //登录栈
     LoggingStatus loggingStatus;
     //当前用户
@@ -38,7 +44,7 @@ int main() {
             getline(std::cin, input);
             //EOF终止
             if (std::cin.eof()) return 0;
-            ProcessLine(input, accountManager, bookManager, logManager, loggingStatus, user);
+            ProcessLine(input, accountManager, bookManager, logManager,transactionManager, loggingStatus, user);
         } catch (ErrorException &ex) {
             std::cout << ex.getMessage() << std::endl;
         }
@@ -59,10 +65,11 @@ bool Initialize() {
     }
 }
 
-void ProcessLine(std::string input,
+void ProcessLine(const std::string& input,
                  AccountManager &accountManager,
                  BookManager &bookManager,
                  LogManager &logManager,
+                 TransactionManager &transactionManager,
                  LoggingStatus &loggingStatus,
                  CurrentAccount &user) {
     TokenScanner tokenScanner(input);
@@ -114,7 +121,8 @@ void ProcessLine(std::string input,
     }
     //购买图书
     if (cmd == "buy") {
-        bookManager.Buy(tokenScanner);
+        double price=bookManager.Buy(tokenScanner);
+        transactionManager.Income(price);
         success = true;
     }
     if (cmd == "select") {
@@ -138,7 +146,8 @@ void ProcessLine(std::string input,
     if (cmd == "import") {
         if (user.privilege <= clerk) error("Invalid");
         std::pair<ISBN, long> pair = loggingStatus.FindSelected();
-        bookManager.Import(tokenScanner, pair);
+        double cast=bookManager.Import(tokenScanner, pair);
+        transactionManager.Expense(cast);
         success = true;
     }
     if(cmd=="show"){
@@ -146,8 +155,17 @@ void ProcessLine(std::string input,
         if(!tokenScanner.HasMoreTokens()||str[0]=='-'){
             bookManager.Show(tokenScanner);
         }else{
-
+           tokenScanner.NextToken(cmd);
+           if(cmd!="finance") error("Invalid");
+           transactionManager.ShowFinance(tokenScanner);
         }
         success= true;
     }
+    if(cmd=="log"){
+        if(user.privilege<host) error("Invalid");
+        if(tokenScanner.HasMoreTokens()) error("Invalid");
+        logManager.PrintLog();
+        success= true;
+    }
+    if(!success) error("Invalid");
 }

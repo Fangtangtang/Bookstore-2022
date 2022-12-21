@@ -307,7 +307,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     if (tokenScanner.HasMoreTokens()) error("Invalid");
 }
 
-void BookManager::Buy(TokenScanner &tokenScanner) {
+double BookManager::Buy(TokenScanner &tokenScanner) {
     char *bookISBN;
     int quantity;
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN);
@@ -328,6 +328,7 @@ void BookManager::Buy(TokenScanner &tokenScanner) {
     buyBook.quantity -= quantity;
     //写回文件（多个文件都要修改）
     Update(buyBook, iter);
+    return sum;
 }
 
 void BookManager::Update(Book book, long iter) {
@@ -518,7 +519,7 @@ void BookManager::ReinsertAuthor(const Book &book, Author_ISBN key) {
 }
 
 void BookManager::ReinsertKeyword(const long &iter,
-                                  char *foreKeywords,
+                                  const char *foreKeywords,
                                   ISBN foreISBN, ISBN isbn,
                                   std::vector<std::string> keywordGroup) {
     //根据foreKeywords删去原有的所有keyword
@@ -573,7 +574,7 @@ void BookManager::RewriteAuthor(const Book &book, const Author_ISBN &key) {
     authorList.WriteValue(book, iter);
 }
 
-void BookManager::Import(TokenScanner &tokenScanner, std::pair<ISBN, long> pair) {
+double BookManager::Import(TokenScanner &tokenScanner, std::pair<ISBN, long> pair) {
     int quantity;
     double totalCast;
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
@@ -595,5 +596,6 @@ void BookManager::Import(TokenScanner &tokenScanner, std::pair<ISBN, long> pair)
     key2.author = book.author;
     key2.bookISBN = book.bookISBN;
     RewriteAuthor(book, key2);
+    return totalCast;
 }
 

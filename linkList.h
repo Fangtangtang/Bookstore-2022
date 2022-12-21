@@ -10,6 +10,14 @@
 #include <iomanip>
 #include <vector>
 
+//头节点（信息储存块）
+struct HeadNode {
+    long next = 0;
+    int count=0;
+    double income=0;
+    double expense=0;
+};
+
 //LinkList类 模板
 //index 检索索引 ；key 排序标记 ；value 数组元素
 //key: GetIndex(index)
@@ -298,6 +306,33 @@ public:
         return std::make_pair(blockNode.Array[i], true);
     }
 
+    //遍历末count个，返回vector
+    std::vector<Value> Traverse(Key startKey){
+        std::vector<Value> eleGroup;
+        long iter = headNode1.next;
+        Head head1;
+        while (iter != 0) {
+            head1 = ReadHead(iter);
+            if (startKey >= head1.min && head1.max >= startKey)break;
+            iter = head1.next;
+        }
+        BlockNode blockNode = ReadNode(iter);
+        int i = 0;
+        index indexSign;
+        while (!(startKey == blockNode.Array[i].GetKey(indexSign))) {
+            ++i;
+        }
+        while (true) {
+            eleGroup.push_back(blockNode.Array[i]);
+            ++i;
+            if (i == blockNode.NodeHead.size) {//结束一个块
+                if(blockNode.NodeHead.next==0) return eleGroup;
+                blockNode = ReadNode(blockNode.NodeHead.next);
+                i = 0;
+            }
+        }
+    }
+
     //读取一个数组元素
     Value ReadValue(long iter) {
         Value value;
@@ -311,6 +346,19 @@ public:
         r_w_LinkList.write(reinterpret_cast<char *> (&value), sizeof(Value));
     }
 
+    //读取headNode信息
+    HeadNode ReadHeadNode(){
+        return headNode1;
+    }
+
+    //更新headNode信息
+    void WriteHeadNode(int count=0,double income=0,double expense=0){
+        headNode1.count=count;
+        headNode1.income=income;
+        headNode1.expense=expense;
+        r_w_LinkList.seekp(head);
+        r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
+    }
 private:
 
     //块链节点头部
@@ -321,13 +369,6 @@ private:
         int size = 0;
         Key max;
         Key min;
-    };
-
-    //头节点
-    struct HeadNode {
-        long next = 0;
-        int count=0;
-        double sum=0;
     };
 
     //数据块

@@ -144,6 +144,8 @@ struct Keyword_ISBN{
     Keyword_ISBN &operator=(const Keyword_ISBN &right);
 
     Keyword GetIndex(Keyword) const;
+
+    Keyword_ISBN GetKey(Keyword) const;
 };
 
 struct Book {
@@ -192,29 +194,29 @@ struct Book {
 
 //存于“book_keyword"中的元素，
 //包含单个keyword ISBN location
-struct BookLocation{
-
-    Keyword keyword;
-
-    ISBN bookISBN;
-
-    long location=0;
-
-    //基于key做比较 重载实际不需要
-    bool operator>(const BookLocation &right) const;
-
-    bool operator==(const BookLocation &right) const;
-
-    bool operator>=(const BookLocation &right) const;
-
-    BookLocation &operator=(const std::pair<BookLocation,bool> &pair);
-
-    Keyword_ISBN GetKey(Keyword keywordIsbn) const;
-
-    Keyword GetIndex(Keyword)const;
-
-    void Print();
-};
+//struct BookLocation{
+//
+//    Keyword keyword;
+//
+//    ISBN bookISBN;
+//
+//    long location=0;
+//
+//    //基于key做比较 重载实际不需要
+//    bool operator>(const BookLocation &right) const;
+//
+//    bool operator==(const BookLocation &right) const;
+//
+//    bool operator>=(const BookLocation &right) const;
+//
+//    BookLocation &operator=(const std::pair<BookLocation,bool> &pair);
+//
+//    Keyword_ISBN GetKey(Keyword keywordIsbn) const;
+//
+//    Keyword GetIndex(Keyword)const;
+//
+//    void Print();
+//};
 
 class BookManager{
 public:
@@ -267,8 +269,8 @@ private:
     LinkList<Author,Author_ISBN,Book> authorList{"book_author"};
 
     //单个keyword排序
-    //index:Keyword key:Keyword_ISBN value:keyword+ISBN+location
-    LinkList<Keyword,Keyword_ISBN,BookLocation> keywordList{"book_keyword"};
+    //index:Keyword key:Keyword_ISBN value:Keyword_ISBN
+    LinkList<Keyword,Keyword_ISBN,Keyword_ISBN> keywordList{"book_keyword"};
 
     //更新信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
     //传入iter为boolList中地址
@@ -289,7 +291,7 @@ private:
     void ReinsertAuthor(const Book &book,Author_ISBN key);
 
     //iter!=0 book新位置
-    void ReinsertKeyword(const long &iter,const char *foreKeywords,ISBN foreISBN,ISBN isbn,std::vector<std::string>keywordGroup);
+    void ReinsertKeyword(const char *foreKeywords,ISBN foreISBN,ISBN isbn,std::vector<std::string>keywordGroup);
 
     void RewriteISBN(const Book &book,const long &foreIter);
 

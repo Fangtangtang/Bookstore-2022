@@ -232,7 +232,7 @@ public:
             iter = head1.next;
         }
         if (iter == 0) {
-            std::cout << "/n";
+            std::cout << "\n";
             return;
         }
         BlockNode blockNode = ReadNode(iter);
@@ -240,7 +240,7 @@ public:
         while (!(index1 == blockNode.Array[i].GetIndex(index1))) {
             ++i;
             if (i == blockNode.NodeHead.size) {
-                std::cout << "/n";
+                std::cout << "\n";
                 return;//没有元素
             }
         }

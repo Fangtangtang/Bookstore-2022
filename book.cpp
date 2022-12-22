@@ -171,6 +171,10 @@ Keyword Keyword_ISBN::GetIndex(Keyword) const {
     return keyword;
 }
 
+Keyword_ISBN Keyword_ISBN::GetKey(Keyword) const {
+    return *this;
+}
+
 //Book---------------------------------------------------------
 bool Book::operator>(const Book &right) const {
     return bookISBN > right.bookISBN;
@@ -226,39 +230,39 @@ Author Book::GetIndex(Author author1) const {
 }
 
 //BookLocation-----------------------------------------
-
-bool BookLocation::operator>(const BookLocation &right) const {
-    return bookISBN > right.bookISBN;
-}
-
-bool BookLocation::operator==(const BookLocation &right) const {
-    return bookISBN == right.bookISBN;
-}
-
-bool BookLocation::operator>=(const BookLocation &right) const {
-    return bookISBN >= right.bookISBN;
-}
-
-BookLocation &BookLocation::operator=(const std::pair<BookLocation, bool> &pair) {
-    *this = pair.first;
-    return *this;
-}
-
-Keyword_ISBN BookLocation::GetKey(Keyword keywordIsbn) const {
-    Keyword_ISBN tmp;
-    tmp.keyword = keyword;
-    tmp.bookISBN = bookISBN;
-    return tmp;
-}
-
-Keyword BookLocation::GetIndex(Keyword) const {
-    return keyword;
-}
-
-void BookLocation::Print() {
-    std::string s_bookISBN = bookISBN.bookISBN, s_keywords = keyword.keyword;
-    std::cout << s_bookISBN << '\t' << s_keywords << '\n';
-}
+//
+//bool BookLocation::operator>(const BookLocation &right) const {
+//    return bookISBN > right.bookISBN;
+//}
+//
+//bool BookLocation::operator==(const BookLocation &right) const {
+//    return bookISBN == right.bookISBN;
+//}
+//
+//bool BookLocation::operator>=(const BookLocation &right) const {
+//    return bookISBN >= right.bookISBN;
+//}
+//
+//BookLocation &BookLocation::operator=(const std::pair<BookLocation, bool> &pair) {
+//    *this = pair.first;
+//    return *this;
+//}
+//
+//Keyword_ISBN BookLocation::GetKey(Keyword keywordIsbn) const {
+//    Keyword_ISBN tmp;
+//    tmp.keyword = keyword;
+//    tmp.bookISBN = bookISBN;
+//    return tmp;
+//}
+//
+//Keyword BookLocation::GetIndex(Keyword) const {
+//    return keyword;
+//}
+//
+//void BookLocation::Print() {
+//    std::string s_bookISBN = bookISBN.bookISBN, s_keywords = keyword.keyword;
+//    std::cout << s_bookISBN << '\t' << s_keywords << '\n';
+//}
 
 //BookManager-----------------------------------
 
@@ -278,7 +282,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         ISBN isbn(token);
         std::pair<Book, bool> pair = bookList.Find(isbn, iter);
         if (pair.second) pair.first.Print();
-        else error("Invalid");
+        else std::cout<<'\n';
         success = true;
     }
     if (type == "name") {
@@ -295,23 +299,23 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     }
     if (type == "keyword") {
 
-        std::cout<<"KEEEEEEEEEEEEEEEEEEEEEEY: \n";
+//        std::cout << "KEEEEEEEEEEEEEEEEEEEEEEY: \n";
 //        bookList.PrintList();
-keywordList.PrintList();
-        std::cout<<"KEEEEEEEEEEEEEEEEEEEEEEY: \n\n";
+//keywordList.PrintList();
+//        std::cout << "KEEEEEEEEEEEEEEEEEEEEEEY: \n\n";
         tokenScanner.Quote(token);
         //构造时判断token是否合法
         Keyword index(token);
         //keyword对应bookLocation集合
-        std::vector<BookLocation> bookLocationGroup = keywordList.FindSubList(index);
-        //由location找book print
+        std::vector<Keyword_ISBN> bookLocationGroup = keywordList.FindSubList(index);
         long bookIter;
         if (bookLocationGroup.empty()) std::cout << '\n';
         else {
             //遍历vector 找书 Print
             for (auto &i: bookLocationGroup) {
-                bookIter = i.location;
-                bookList.ReadValue(bookIter).Print();
+                long iter1;
+                std::pair<Book, bool> pair = bookList.Find(i.bookISBN, iter1);
+                pair.first.Print();
             }
         }
         success = true;
@@ -391,7 +395,7 @@ Book BookManager::GetBook(long iter) {
     return bookList.ReadValue(iter);
 }
 
-void BookManager::Modify(TokenScanner &tokenScanner, Book book,long foreIter) {
+void BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter) {
     if (!tokenScanner.HasMoreTokens()) error("Invalid");
     Book modify = book;//修改后信息
     std::string type, str;
@@ -503,8 +507,7 @@ void BookManager::Modify(TokenScanner &tokenScanner, Book book,long foreIter) {
         if (rewrite_author_flag) RewriteAuthor(modify, authorKey);
     }
     char *foreKeywords = book.keywords;
-    if (reinsert_keywords_flag) ReinsertKeyword(iterISBN, foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
-
+    if (reinsert_keywords_flag) ReinsertKeyword( foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
 
 }
 
@@ -516,7 +519,7 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
         while (str[end] != '|' && end < str.length()) {
             ++end;
         }
-        keyword = str.substr(start, end -start);
+        keyword = str.substr(start, end - start);
         if (std::find(keywordGroup.begin(), keywordGroup.end(), keyword) != keywordGroup.end())
             error("Invalid");
         keywordGroup.push_back(keyword);
@@ -546,8 +549,7 @@ void BookManager::ReinsertAuthor(const Book &book, Author_ISBN key) {
     authorList.Insert(key, book);
 }
 
-void BookManager::ReinsertKeyword(const long &iter,
-                                  const char *foreKeywords,
+void BookManager::ReinsertKeyword(const char *foreKeywords,
                                   ISBN foreISBN, ISBN isbn,
                                   std::vector<std::string> keywordGroup) {
     //根据foreKeywords删去原有的所有keyword
@@ -557,7 +559,6 @@ void BookManager::ReinsertKeyword(const long &iter,
     CutKeywords(str, foreKeywordGroup);
     Keyword keyword;
     Keyword_ISBN key;
-    BookLocation bookLocation;
     //循环删去
     while (!foreKeywordGroup.empty()) {
         keyword = MakeKeyword(foreKeywordGroup.back());
@@ -572,10 +573,9 @@ void BookManager::ReinsertKeyword(const long &iter,
     while (!keywordGroup.empty()) {
         keyword = MakeKeyword(keywordGroup.back());
         keywordGroup.pop_back();
-        bookLocation.keyword = key.keyword = keyword;
-        bookLocation.bookISBN = key.bookISBN = isbn;
-        if (iter)bookLocation.location = iter;
-        keywordList.Insert(key, bookLocation);
+        key.keyword = keyword;
+        key.bookISBN = isbn;
+        keywordList.Insert(key, key);
     }
 }
 

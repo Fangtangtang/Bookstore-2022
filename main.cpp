@@ -96,9 +96,9 @@ std::string ProcessLine(const std::string &input,
 
     --c;
     ++a;
-    if(c==0){
-        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-    }
+//    if(c==0){
+//        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+//    }
 //    std::cout<<'\n'<<a<<" "<<cmd<<": ";
 
     if (cmd == " ") return "";

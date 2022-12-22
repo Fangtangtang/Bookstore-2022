@@ -146,6 +146,8 @@ struct Keyword_ISBN{
     Keyword GetIndex(Keyword) const;
 
     Keyword_ISBN GetKey(Keyword) const;
+
+    void Print();
 };
 
 struct Book {

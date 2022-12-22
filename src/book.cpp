@@ -158,7 +158,7 @@ bool Keyword_ISBN::operator>(const Keyword_ISBN &right) const {
 }
 
 bool Keyword_ISBN::operator==(const Keyword_ISBN &right) const {
-    return bookISBN == right.bookISBN;
+    return (bookISBN == right.bookISBN && keyword == right.keyword);
 }
 
 bool Keyword_ISBN::operator>=(const Keyword_ISBN &right) const {
@@ -173,6 +173,10 @@ Keyword Keyword_ISBN::GetIndex(Keyword) const {
 
 Keyword_ISBN Keyword_ISBN::GetKey(Keyword) const {
     return *this;
+}
+
+void Keyword_ISBN::Print() {
+    std::cout << bookISBN.bookISBN << '\t' << keyword.keyword << '\n';
 }
 
 //Book---------------------------------------------------------
@@ -526,15 +530,16 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
     char *foreKeywords = book.keywords;
     if (reinsert_keywords_flag) ReinsertKeyword(foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
 
-//    std::cout<<"AFTER    MODYFYYYYYYYYYY: \n";
-//    bookList.PrintList();
-//    std::cout<<"MODIFYYYYYYYYYY: \n\n";
+//    std::cout << "KYYYYYAFTER    MODYFYYYYYYYYYY: \n";
+//    keywordList.PrintList();
+//    std::cout << "MODIFYYYYYYYYYY: \n\n";
 
 
     return change_ISBN;
 }
 
 void BookManager::CutKeywords(std::string str, std::vector<std::string> &keywordGroup) {
+    if (str.empty()) return;
     int start = 0;
     std::string keyword;
     int end = 0;

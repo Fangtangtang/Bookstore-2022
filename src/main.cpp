@@ -21,7 +21,7 @@ std::string ProcessLine(const std::string &input,
                         CurrentAccount &user);
 
 int main() {
-    freopen("my.out", "w", stdout);
+//    freopen("my.out", "w", stdout);
 
     bool initialize_flag = Initialize();
     //接入系统的对象
@@ -81,7 +81,7 @@ bool Initialize() {
     }
 }
 
-int c = 10, a = 0;
+int c = 8, a = 0;
 
 //返回操作语句
 std::string ProcessLine(const std::string &input,

@@ -28,9 +28,9 @@ class LinkList {
 public:
     LinkList(const std::string &file_name) {
 
-//        r_w_LinkList.open(file_name);
+        r_w_LinkList.open(file_name);
 
-        r_w_LinkList.open(file_name, std::fstream::trunc);
+//        r_w_LinkList.open(file_name, std::fstream::trunc);
 
         if (!r_w_LinkList.good()) {
             //create headNode

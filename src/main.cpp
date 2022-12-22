@@ -22,7 +22,7 @@ std::string ProcessLine(const std::string &input,
 
 int main() {
 //    freopen("C:\repos\Bookstore-2022\bookstore-testcases\advanced\testcase1\1.in","r",stdin);
-    freopen("my.out","w",stdout);
+//    freopen("my.out","w",stdout);
 
     bool initialize_flag = Initialize();
     //接入系统的对象
@@ -31,7 +31,7 @@ int main() {
     LogManager logManager;
     TransactionManager transactionManager;
     //***************************
-    accountManager.InitialAccount();
+//    accountManager.InitialAccount();
     //***************************
     if (initialize_flag) {
         accountManager.InitialAccount();
@@ -79,7 +79,7 @@ bool Initialize() {
     }
 }
 
-int c=152,a=0;
+int c=25,a=0;
 //返回操作语句
 std::string ProcessLine(const std::string &input,
                         AccountManager &accountManager,
@@ -99,7 +99,7 @@ std::string ProcessLine(const std::string &input,
 //    if(c==0){
 //        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 //    }
-//    std::cout<<'\n'<<a<<" "<<cmd<<": ";
+//    std::cout<<a<<" "<<cmd<<": ";
 
     if (cmd == " ") return "";
     if (cmd == "quit" || cmd == "exit") {
@@ -161,9 +161,9 @@ std::string ProcessLine(const std::string &input,
 //        ****************************
         if (user.privilege <clerk) error("Invalid");
         //找书或新建
-        std::pair<ISBN, long> pair = bookManager.Select(tokenScanner);
+        ISBN isbn = bookManager.Select(tokenScanner);
         //修改用户选书信息
-        loggingStatus.SelectBook(pair);
+        loggingStatus.SelectBook(isbn);
         success = true;
   }
     if (cmd == "modify") {
@@ -174,15 +174,17 @@ std::string ProcessLine(const std::string &input,
         //用户权限
         if (user.privilege < clerk) error("Invalid");
         //选中图书
-        std::pair<ISBN, long> pair = loggingStatus.FindSelected();
-        Book book=bookManager.GetBook(pair.second);
-        bookManager.Modify(tokenScanner, book,pair.second);
+        ISBN isbn = loggingStatus.FindSelected();
+        long iter=0;
+        Book book=bookManager.GetBook(isbn,iter);
+       bool change_ISBN_flag=bookManager.Modify(tokenScanner, book,iter,isbn);
+       if(change_ISBN_flag) loggingStatus.SelectBook(isbn);
         success = true;
     }
     if (cmd == "import") {
         if (user.privilege < clerk) error("Invalid");
-        std::pair<ISBN, long> pair = loggingStatus.FindSelected();
-        double cast = bookManager.Import(tokenScanner, pair);
+        ISBN isbn = loggingStatus.FindSelected();
+        double cast = bookManager.Import(tokenScanner, isbn);
         transactionManager.Expense(cast);
         success = true;
     }

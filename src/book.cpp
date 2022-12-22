@@ -270,6 +270,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     //无附加 遍历bookList
     if (!tokenScanner.HasMoreTokens()) {
         bookList.PrintList();
+        return;
     }
     bool success = false;
     std::string type;
@@ -366,7 +367,7 @@ void BookManager::Update(Book book, long iter) {
     authorList.WriteValue(book, iter);
 }
 
-std::pair<ISBN, long> BookManager::Select(TokenScanner &tokenScanner) {
+ISBN BookManager::Select(TokenScanner &tokenScanner) {
     char isbn[21];
     memset(isbn, 0, sizeof(isbn));
     long iter;
@@ -382,7 +383,7 @@ std::pair<ISBN, long> BookManager::Select(TokenScanner &tokenScanner) {
 //    bookList.PrintList();
 //    std::cout<<"SELE: \n\n";
 
-    return std::make_pair(bookISBN, iter);
+    return bookISBN;
 }
 
 long BookManager::AddBook(ISBN isbn) {
@@ -395,7 +396,14 @@ Book BookManager::GetBook(long iter) {
     return bookList.ReadValue(iter);
 }
 
-void BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter) {
+Book BookManager::GetBook(ISBN isbn,long &iter) {
+    std::pair<Book,bool>pair= bookList.Find(isbn,iter);
+    if(!pair.second) error("Invalid");
+    return pair.first;
+}
+
+
+bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter,ISBN &isbn) {
     if (!tokenScanner.HasMoreTokens()) error("Invalid");
     Book modify = book;//修改后信息
     std::string type, str;
@@ -430,6 +438,7 @@ void BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter) {
             modify.bookISBN = newISBN;
             //设置已修改
             change_ISBN = true;
+            isbn=newISBN;
             //设置flag
             reinsert_ISBN_flag = true;
             reinsert_name_flag = true;
@@ -480,13 +489,18 @@ void BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter) {
             rewrite_name_flag = true;
             rewrite_author_flag = true;
         }
+
+//        std::cout<<"MODYFYYYYYYYYYY: \n";
+//        bookList.PrintList();
+//        std::cout<<"MODIFYYYYYYYYYY: \n\n";
+
     }
     //原书
 //    Book selected = bookList.ReadValue(pair.second);
     long iterISBN = foreIter;//book_information中位置
     // 重插或重写
     if (reinsert_ISBN_flag) {
-        ReinsertISBN(modify, iterISBN);
+        ReinsertISBN(modify, book.bookISBN);
     } else {
         if (rewrite_ISBN_flag) RewriteISBN(modify, foreIter);
     }
@@ -508,7 +522,7 @@ void BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter) {
     }
     char *foreKeywords = book.keywords;
     if (reinsert_keywords_flag) ReinsertKeyword( foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
-
+    return change_ISBN;
 }
 
 void BookManager::CutKeywords(std::string str, std::vector<std::string> &keywordGroup) {
@@ -529,9 +543,10 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
     }
 }
 
-void BookManager::ReinsertISBN(const Book &book, long &iter) {
-    bookList.Delete(book.bookISBN);//优化空间 直接由foreIter
+void BookManager::ReinsertISBN(const Book &book, ISBN foreISBN) {
+    bookList.Delete(foreISBN);//优化空间 直接由foreIter
     bookList.Insert(book.bookISBN, book);
+    long iter=0;
     bookList.Find(book.bookISBN, iter);//优化空间 直接从insert获取？
 }
 
@@ -602,7 +617,7 @@ void BookManager::RewriteAuthor(const Book &book, const Author_ISBN &key) {
     authorList.WriteValue(book, iter);
 }
 
-double BookManager::Import(TokenScanner &tokenScanner, std::pair<ISBN, long> pair) {
+double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {
     int quantity;
     double totalCast;
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
@@ -612,10 +627,13 @@ double BookManager::Import(TokenScanner &tokenScanner, std::pair<ISBN, long> pai
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     if (quantity == 0 || totalCast == 0) error("Invalid");
     //图书信息
-    Book book = bookList.ReadValue(pair.second);
+    long iter;
+    std::pair<Book,bool> pair=bookList.Find(isbn,iter);
+    if(!pair.second) error("Invalid");
+    Book book = pair.first;
     book.quantity += quantity;
     //重写
-    RewriteISBN(book, pair.second);
+    RewriteISBN(book, iter);
     Name_ISBN key1;
     key1.name = book.name;
     key1.bookISBN = book.bookISBN;

@@ -240,8 +240,8 @@ public:
     double Buy(TokenScanner &tokenScanner);
 
     //选择图书 {3} select [ISBN]
-    //返回选中图书的ISBN和位置
-    std::pair<ISBN,long> Select(TokenScanner &tokenScanner);
+    //返回选中图书的ISBN
+    ISBN Select(TokenScanner &tokenScanner);
 
     //修改当前选中图书信息
     //修改ISBN影响排序 delete add 且修改keyword文件
@@ -249,13 +249,15 @@ public:
     //修改keyword需把原先从文件中删干净
     //分成多个修改函数
     //modify_flag
-    void Modify(TokenScanner &tokenScanner,Book book,long iter);
+    bool Modify(TokenScanner &tokenScanner,Book book,long iter,ISBN &isbn);
 
     //图书进货{3} import [Quantity] [TotalCost]
     //修改quantity(in ISBN,name,author)
-    double Import(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
+    double Import(TokenScanner &tokenScanner,ISBN isbn);
 
     Book GetBook(long iter);
+
+    Book GetBook(ISBN isbn,long &iter);
 
 private:
     //类中用（）会和声明函数歧义
@@ -284,7 +286,7 @@ private:
     static void CutKeywords(std::string str,std::vector<std::string>&keywordGroup);
 
     //book:新信息 foreIter:原地址 iter:新地址
-    void ReinsertISBN(const Book &book,long &iter);
+    void ReinsertISBN(const Book &book,ISBN foreISBN);
 
     void ReinsertName(const Book &book,Name_ISBN key);
 

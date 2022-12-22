@@ -87,7 +87,7 @@ void TokenScanner::NextToken(double &doubleNum) {
         } else error("Invalid");
     }
     double mul = 1;
-    while (input[tokenEnd] != ' ') {
+    while (tokenEnd<length&&input[tokenEnd] != ' ') {
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0'<10) {
             mul *= 0.1;
             doubleNum += (input[tokenEnd] - '0') * mul;
@@ -114,7 +114,7 @@ void TokenScanner::TakeType(std::string &str) {
     }
     if(input[tokenEnd]!='=') error("Invalid");
     str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+"-"+str+"= ";
+    operation=operation+"-"+str+"=";
     UpdatePos();
 }
 
@@ -144,6 +144,7 @@ std::string TokenScanner::ShowOperation() {
 
 //private
 void TokenScanner::UpdatePos() {
+    if(tokenEnd>=input.size()) return;
     tokenStart = tokenEnd + 1;
     while (input[tokenStart] == ' ') {
         ++tokenStart;

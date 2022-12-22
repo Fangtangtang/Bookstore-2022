@@ -21,10 +21,10 @@ public:
     void Logout(TokenScanner &tokenScanner,CurrentAccount &user);
 
     //记录用户和选中的图书
-    void SelectBook(std::pair<ISBN,long> pair);
+    void SelectBook(ISBN);
 
     //寻找当前选中的书
-    std::pair<ISBN,long>  FindSelected();
+    ISBN FindSelected();
 
     bool Find(const ID& id);
 private:
@@ -35,7 +35,7 @@ private:
     std::vector<Privilege> privilegeVector;
 
     //ID->selectedBook
-    std::vector<std::pair<ISBN,long>> bookVector;
+    std::vector<ISBN> bookVector;
 
     //返回当前账户信息
     CurrentAccount Flush();

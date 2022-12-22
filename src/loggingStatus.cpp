@@ -20,11 +20,9 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //登录成功 加入登录栈
         ISBN isbn;//空图书
-        long l = 0;
-        std::pair<ISBN, long> nullBook = std::make_pair(isbn, l);
-        IDVector.push_back(suAccount.userID);
+         IDVector.push_back(suAccount.userID);
         privilegeVector.push_back(suAccount.privilege);
-        bookVector.push_back(nullBook);
+        bookVector.push_back(isbn);
         //更新当前user
         user.privilege = suAccount.privilege;
         user.userID = suAccount.userID;
@@ -55,12 +53,12 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
     user = Flush();
 }
 
-void LoggingStatus::SelectBook(std::pair<ISBN, long> pair) {
+void LoggingStatus::SelectBook(ISBN isbn) {
     bookVector.pop_back();
-    bookVector.push_back(pair);
+    bookVector.push_back(isbn);
 }
 
-std::pair<ISBN, long> LoggingStatus::FindSelected() {
+ISBN LoggingStatus::FindSelected() {
     return bookVector.back();
 }
 

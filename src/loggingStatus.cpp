@@ -64,11 +64,16 @@ ISBN LoggingStatus::FindSelected() {
 
 CurrentAccount LoggingStatus::Flush() {
     CurrentAccount tmp;
-    if (!IDVector.empty()) {
-        tmp.privilege = privilegeVector.back();
-        tmp.userID = IDVector.back();
-    } else {
+    if(IDVector.empty())  {
         tmp.privilege = none;
+        return tmp;
+    }else{
+        tmp.privilege = privilegeVector.back();
+        if (!IDVector.empty()) {
+            tmp.userID = IDVector.back();
+        } else {
+            tmp.privilege = none;
+        }
     }
     return tmp;
 }

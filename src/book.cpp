@@ -283,7 +283,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         ISBN isbn(token);
         std::pair<Book, bool> pair = bookList.Find(isbn, iter);
         if (pair.second) pair.first.Print();
-        else std::cout<<'\n';
+        else std::cout << '\n';
         success = true;
     }
     if (type == "name") {
@@ -333,6 +333,7 @@ double BookManager::Buy(TokenScanner &tokenScanner) {
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
     else error("Invalid");
+    if (quantity == 0) error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     double sum = 0;
     long iter;
@@ -396,14 +397,14 @@ Book BookManager::GetBook(long iter) {
     return bookList.ReadValue(iter);
 }
 
-Book BookManager::GetBook(ISBN isbn,long &iter) {
-    std::pair<Book,bool>pair= bookList.Find(isbn,iter);
-    if(!pair.second) error("Invalid");
+Book BookManager::GetBook(ISBN isbn, long &iter) {
+    std::pair<Book, bool> pair = bookList.Find(isbn, iter);
+    if (!pair.second) error("Invalid");
     return pair.first;
 }
 
 
-bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter,ISBN &isbn) {
+bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, ISBN &isbn) {
     if (!tokenScanner.HasMoreTokens()) error("Invalid");
     Book modify = book;//修改后信息
     std::string type, str;
@@ -434,11 +435,13 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter,IS
             tokenScanner.NextToken(token);
             ISBN newISBN(token);
             //不可重复
-            if (newISBN == book.bookISBN) error("Invalid");
+            long iter;
+            if (bookList.Find(newISBN, iter).second)error("Invalid");
+//            if (newISBN == book.bookISBN)
             modify.bookISBN = newISBN;
             //设置已修改
             change_ISBN = true;
-            isbn=newISBN;
+            isbn = newISBN;
             //设置flag
             reinsert_ISBN_flag = true;
             reinsert_name_flag = true;
@@ -489,8 +492,8 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter,IS
             rewrite_name_flag = true;
             rewrite_author_flag = true;
         }
-
-//        std::cout<<"MODYFYYYYYYYYYY: \n";
+//
+//        std::cout<<"BEFORE    MODYFYYYYYYYYYY: \n";
 //        bookList.PrintList();
 //        std::cout<<"MODIFYYYYYYYYYY: \n\n";
 
@@ -521,7 +524,13 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter,IS
         if (rewrite_author_flag) RewriteAuthor(modify, authorKey);
     }
     char *foreKeywords = book.keywords;
-    if (reinsert_keywords_flag) ReinsertKeyword( foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
+    if (reinsert_keywords_flag) ReinsertKeyword(foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
+
+//    std::cout<<"AFTER    MODYFYYYYYYYYYY: \n";
+//    bookList.PrintList();
+//    std::cout<<"MODIFYYYYYYYYYY: \n\n";
+
+
     return change_ISBN;
 }
 
@@ -546,7 +555,7 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
 void BookManager::ReinsertISBN(const Book &book, ISBN foreISBN) {
     bookList.Delete(foreISBN);//优化空间 直接由foreIter
     bookList.Insert(book.bookISBN, book);
-    long iter=0;
+    long iter = 0;
     bookList.Find(book.bookISBN, iter);//优化空间 直接从insert获取？
 }
 
@@ -628,8 +637,8 @@ double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {
     if (quantity == 0 || totalCast == 0) error("Invalid");
     //图书信息
     long iter;
-    std::pair<Book,bool> pair=bookList.Find(isbn,iter);
-    if(!pair.second) error("Invalid");
+    std::pair<Book, bool> pair = bookList.Find(isbn, iter);
+    if (!pair.second) error("Invalid");
     Book book = pair.first;
     book.quantity += quantity;
     //重写

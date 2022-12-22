@@ -21,8 +21,7 @@ std::string ProcessLine(const std::string &input,
                         CurrentAccount &user);
 
 int main() {
-//    freopen("C:\repos\Bookstore-2022\bookstore-testcases\advanced\testcase1\1.in","r",stdin);
-//    freopen("my.out","w",stdout);
+    freopen("my.out", "w", stdout);
 
     bool initialize_flag = Initialize();
     //接入系统的对象
@@ -43,10 +42,12 @@ int main() {
     LoggingStatus loggingStatus;
     //当前用户
     CurrentAccount user;
+    ID userID;
     //浮点数输出精度设置
     std::cout << std::fixed << std::setprecision(2);
     while (true) {
         std::string operation;
+        userID = user.userID;
         try {
             std::string input;
             getline(std::cin, input);
@@ -58,9 +59,10 @@ int main() {
         } catch (ErrorException &ex) {
             std::cout << ex.getMessage() << std::endl;
         }
+        if(operation=="RETURN") return 0;
         //向日志添加操作信息
         if (operation.empty()) operation = "FAILED";
-        logManager.AddLog(user.userID, operation);
+        logManager.AddLog(userID, operation);
     }
 }
 
@@ -79,7 +81,8 @@ bool Initialize() {
     }
 }
 
-int c=25,a=0;
+int c = 10, a = 0;
+
 //返回操作语句
 std::string ProcessLine(const std::string &input,
                         AccountManager &accountManager,
@@ -99,12 +102,18 @@ std::string ProcessLine(const std::string &input,
 //    if(c==0){
 //        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 //    }
-//    std::cout<<a<<" "<<cmd<<": ";
+//    std::cout << a << " " << cmd << ": ";
 
     if (cmd == " ") return "";
     if (cmd == "quit" || cmd == "exit") {
+
+//        std::cout<<"@@@@@@@@@@@@\n";
+//        bookManager.PRINT();
+//        std::cout<<"@@@@@@@@@@@@\n\n";
+
         if (tokenScanner.HasMoreTokens()) error("Invalid");
-        exit(0);
+//        exit(0);
+        return "RETURN";
     }
     //登录账户
     if (cmd == "su") {
@@ -113,6 +122,7 @@ std::string ProcessLine(const std::string &input,
     }
     //登出
     if (cmd == "logout") {
+        if (user.privilege == none)error("Invalid");
         loggingStatus.Logout(tokenScanner, user);
         success = true;
     }
@@ -123,6 +133,7 @@ std::string ProcessLine(const std::string &input,
     }
     //修改密码
     if (cmd == "passwd") {
+        if (user.privilege == none)error("Invalid");
         accountManager.ChangePassword(tokenScanner, user);
         success = true;
     }
@@ -149,7 +160,7 @@ std::string ProcessLine(const std::string &input,
 //        std::cout<<"BUYYYYYYYYYYYYYYYYYYYYYYYYYYYY BOOK\n";
 //        bookManager.PRINT();
         //****************************
-
+        if (user.privilege == none)error("Invalid");
         double price = bookManager.Buy(tokenScanner);
         transactionManager.Income(price);
         success = true;
@@ -159,13 +170,13 @@ std::string ProcessLine(const std::string &input,
 //        std::cout<<"SELECTTTTTTTTTTTTTTTTTT BOOK\n";
 //        bookManager.PRINT();
 //        ****************************
-        if (user.privilege <clerk) error("Invalid");
+        if (user.privilege < clerk) error("Invalid");
         //找书或新建
         ISBN isbn = bookManager.Select(tokenScanner);
         //修改用户选书信息
         loggingStatus.SelectBook(isbn);
         success = true;
-  }
+    }
     if (cmd == "modify") {
 //        ****************************
 //        std::cout<<"MODIFYYYYYYYYYYYYYYYYYYYYYYYYYYYY BOOK\n";
@@ -175,26 +186,30 @@ std::string ProcessLine(const std::string &input,
         if (user.privilege < clerk) error("Invalid");
         //选中图书
         ISBN isbn = loggingStatus.FindSelected();
-        long iter=0;
-        Book book=bookManager.GetBook(isbn,iter);
-       bool change_ISBN_flag=bookManager.Modify(tokenScanner, book,iter,isbn);
-       if(change_ISBN_flag) loggingStatus.SelectBook(isbn);
+        long iter = 0;
+        Book book = bookManager.GetBook(isbn, iter);
+        bool change_ISBN_flag = bookManager.Modify(tokenScanner, book, iter, isbn);
+        if (change_ISBN_flag) loggingStatus.SelectBook(isbn);
         success = true;
     }
     if (cmd == "import") {
         if (user.privilege < clerk) error("Invalid");
         ISBN isbn = loggingStatus.FindSelected();
+        long iter = 0;
+        Book book = bookManager.GetBook(isbn, iter);
         double cast = bookManager.Import(tokenScanner, isbn);
         transactionManager.Expense(cast);
         success = true;
     }
     if (cmd == "show") {
+        if (user.privilege == none)error("Invalid");
         std::string str = tokenScanner.ShowRest();
         if (!tokenScanner.HasMoreTokens() || str[0] == '-') {
             bookManager.Show(tokenScanner);
         } else {
             tokenScanner.NextToken(cmd);
             if (cmd != "finance") error("Invalid");
+            if (user.privilege < host) error("Invalid");
             transactionManager.ShowFinance(tokenScanner);
         }
         success = true;
@@ -205,6 +220,7 @@ std::string ProcessLine(const std::string &input,
         logManager.PrintLog();
         success = true;
     }
+//    bookManager.PRINT();
     if (!success) error("Invalid");
     return tokenScanner.ShowOperation();
 }

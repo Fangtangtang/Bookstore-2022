@@ -67,7 +67,7 @@ void TransactionManager::Expense(double cast) {
 void TransactionManager::ShowFinance(TokenScanner &tokenScanner) {
     if (!tokenScanner.HasMoreTokens()) {
         if (financeCount == 0) std::cout << income << '\n';
-        else std::cout << '+' << income << '-' << expense << '\n';
+        else std::cout << "+ " << income << " - " << expense << '\n';
         return;
     }
     int count;
@@ -91,7 +91,7 @@ void TransactionManager::ShowFinance(TokenScanner &tokenScanner) {
         }
         transactionGroup.pop_back();
     }
-    std::cout << '+' << in << '-' << out << '\n';
+    std::cout << "+ " << in << " - " << out << '\n';
 }
 
 //LogManager---------------------------------------------------------

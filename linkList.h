@@ -13,9 +13,9 @@
 //头节点（信息储存块）
 struct HeadNode {
     long next = 0;
-    int count=0;
-    double income=0;
-    double expense=0;
+    int count = 0;
+    double income = 0;
+    double expense = 0;
 };
 
 //LinkList类 模板
@@ -74,7 +74,10 @@ public:
         }
     }
 
-    void Insert(Key key, Value ele) {
+    long Insert(Key key, Value ele) {
+        //插入地址
+        long location = 0;
+        int num = 0;
         bool break_flag = false;//是否break
         bool insert_flag = false;
         BlockNode blockNode;
@@ -86,7 +89,7 @@ public:
             iter = r_w_LinkList.tellp();
             blockNode.NodeHead.pre = head;
             headNode1.next = iter;
-            blockNode.Insert(key, ele);//不可能裂块
+            num = blockNode.Insert(key, ele);//不可能裂块
             r_w_LinkList.seekp(head);
             r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
             WriteNode(blockNode, iter);
@@ -96,7 +99,7 @@ public:
             head2 = ReadHead(iter);
             if (head2.max > key) {
                 blockNode = ReadNode(iter);
-                blockNode.Insert(key, ele);
+                num = blockNode.Insert(key, ele);
                 insert_flag = true;
                 if (blockNode.NodeHead.size == blockSize)break_flag = true;
                 if (break_flag) {
@@ -113,7 +116,7 @@ public:
                         if (head1.max > key) {
                             iter = head2.pre;
                             blockNode = ReadNode(iter);
-                            blockNode.Insert(key, ele);//插入当前块的array
+                            num = blockNode.Insert(key, ele);//插入当前块的array
                             if (blockNode.NodeHead.size == blockSize)break_flag = true;
                             if (break_flag) {
                                 BreakNode(iter, blockNode);
@@ -122,7 +125,7 @@ public:
                         }
                         if (key > head1.max) {
                             blockNode = ReadNode(iter);
-                            blockNode.Insert(key, ele);//插入后一块的array
+                            num = blockNode.Insert(key, ele);//插入后一块的array
                             if (blockNode.NodeHead.size == blockSize)break_flag = true;
                             if (break_flag) {
                                 BreakNode(iter, blockNode);
@@ -138,13 +141,15 @@ public:
                     if (head1.next != 0)iter = head1.next;
                     else iter = headNode1.next;
                     blockNode = ReadNode(iter);
-                    blockNode.Insert(key, ele);//插入后一块的array
+                    num = blockNode.Insert(key, ele);//插入后一块的array
                     if (blockNode.NodeHead.size == blockSize)break_flag = true;
                     if (break_flag) BreakNode(iter, blockNode);
                     WriteNode(blockNode, iter);
                 }
             }
         }
+        location = iter + sizeof(Head) + num * sizeof(Value);
+        return location;
     }
 
     //Delete
@@ -253,7 +258,7 @@ public:
 
     //以index寻找元素
     //返回value数组
-    std::vector<Value> FindSubList(const index &index1){
+    std::vector<Value> FindSubList(const index &index1) {
         std::vector<Value> vec;
         long iter = headNode1.next;
         Head head1;
@@ -286,17 +291,17 @@ public:
 
     //基于key寻找value
     //iter是value地址
-    std::pair<Value, bool> Find(const Key &key,long &iter){
+    std::pair<Value, bool> Find(const Key &key, long &iter) {
         iter = headNode1.next;
         Head head1;
         Value value;
         index indexSign;
         while (iter != 0) {
             head1 = ReadHead(iter);
-            if (key >= head1.min && head1.max>= key)break;
+            if (key >= head1.min && head1.max >= key)break;
             iter = head1.next;
         }
-        if(iter==0){
+        if (iter == 0) {
             return std::make_pair(value, false);
         }
         BlockNode blockNode = ReadNode(iter);
@@ -308,12 +313,12 @@ public:
             }
         }
         //数组元素地址
-        iter=iter+sizeof (Head)+i* sizeof(Value);
+        iter = iter + sizeof(Head) + i * sizeof(Value);
         return std::make_pair(blockNode.Array[i], true);
     }
 
     //遍历末count个，返回vector
-    std::vector<Value> Traverse(Key startKey){
+    std::vector<Value> Traverse(Key startKey) {
         std::vector<Value> eleGroup;
         long iter = headNode1.next;
         Head head1;
@@ -332,7 +337,7 @@ public:
             eleGroup.push_back(blockNode.Array[i]);
             ++i;
             if (i == blockNode.NodeHead.size) {//结束一个块
-                if(blockNode.NodeHead.next==0) return eleGroup;
+                if (blockNode.NodeHead.next == 0) return eleGroup;
                 blockNode = ReadNode(blockNode.NodeHead.next);
                 i = 0;
             }
@@ -347,24 +352,25 @@ public:
         return value;
     }
 
-    void WriteValue(Value value, const long &iter){
+    void WriteValue(Value value, const long &iter) {
         r_w_LinkList.seekp(iter);
         r_w_LinkList.write(reinterpret_cast<char *> (&value), sizeof(Value));
     }
 
     //读取headNode信息
-    HeadNode ReadHeadNode(){
+    HeadNode ReadHeadNode() {
         return headNode1;
     }
 
     //更新headNode信息
-    void WriteHeadNode(int count=0,double income=0,double expense=0){
-        headNode1.count=count;
-        headNode1.income=income;
-        headNode1.expense=expense;
+    void WriteHeadNode(int count = 0, double income = 0, double expense = 0) {
+        headNode1.count = count;
+        headNode1.income = income;
+        headNode1.expense = expense;
         r_w_LinkList.seekp(head);
         r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
     }
+
 private:
 
     //块链节点头部
@@ -383,13 +389,13 @@ private:
         Value Array[blockSize];
 
         //Insert
-        void Insert(const Key &key, const Value &ele) {
+        int Insert(const Key &key, const Value &ele) {
             int i = 0;
             index indexSign;
             while (key > Array[i].GetKey(indexSign) && i < NodeHead.size) {
                 ++i;
             }
-            if (i < NodeHead.size && key == Array[i].GetKey(indexSign)) return;
+            if (i < NodeHead.size && key == Array[i].GetKey(indexSign)) return 1024;
             int move = NodeHead.size;
             while (move != i) {
                 Array[move] = Array[move - 1];
@@ -399,6 +405,7 @@ private:
             ++NodeHead.size;
             if (i == 0) NodeHead.min = key;
             if (i == NodeHead.size - 1) NodeHead.max = key;
+            return i;
         }
 
         //Delete
@@ -423,7 +430,7 @@ private:
     };
 
     HeadNode headNode1;
-    long head=0;//头节点位置
+    long head = 0;//头节点位置
 
     //LinkList读写的文件流对象 在LinkList构造时和相关文件关联
     std::fstream r_w_LinkList;
@@ -443,7 +450,6 @@ private:
         r_w_LinkList.read(reinterpret_cast<char *> (&nodeHead), sizeof(Head));
         return nodeHead;
     }
-
 
 
     //Write 块链信息

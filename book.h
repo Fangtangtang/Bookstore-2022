@@ -247,11 +247,13 @@ public:
     //修改keyword需把原先从文件中删干净
     //分成多个修改函数
     //modify_flag
-    void Modify(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
+    void Modify(TokenScanner &tokenScanner,Book book,long iter);
 
     //图书进货{3} import [Quantity] [TotalCost]
     //修改quantity(in ISBN,name,author)
     double Import(TokenScanner &tokenScanner,std::pair<ISBN,long> pair);
+
+    Book GetBook(long iter);
 
 private:
     //类中用（）会和声明函数歧义
@@ -268,22 +270,19 @@ private:
     //index:Keyword key:Keyword_ISBN value:keyword+ISBN+location
     LinkList<Keyword,Keyword_ISBN,BookLocation> keywordList{"book_keyword"};
 
-//    //查找
-//    Book FindBook(const std::string &);
-
     //更新信息 ATTENTION：若修改成功，需要到文件中覆盖原有信息
     //传入iter为boolList中地址
     //增减库存 不动keyword文件
     void Update(Book book,long iter);
 
     //创建仅拥有ISBN的book 只需修改bookList
-    void AddBook(ISBN isbn);
+    long AddBook(ISBN isbn);
 
     //将keywords切片为string型 查重
     static void CutKeywords(std::string str,std::vector<std::string>&keywordGroup);
 
     //book:新信息 foreIter:原地址 iter:新地址
-    void ReinsertISBN(const Book &book,const long &foreIter,long &iter);
+    void ReinsertISBN(const Book &book,long &iter);
 
     void ReinsertName(const Book &book,Name_ISBN key);
 

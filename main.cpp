@@ -79,6 +79,7 @@ bool Initialize() {
     }
 }
 
+int c=152,a=0;
 //返回操作语句
 std::string ProcessLine(const std::string &input,
                         AccountManager &accountManager,
@@ -93,7 +94,12 @@ std::string ProcessLine(const std::string &input,
     bool success = false;
     tokenScanner.NextToken(cmd);
 
-//    std::cout<<cmd<<": ";
+    --c;
+    ++a;
+    if(c==0){
+        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    }
+//    std::cout<<'\n'<<a<<" "<<cmd<<": ";
 
     if (cmd == " ") return "";
     if (cmd == "quit" || cmd == "exit") {
@@ -140,8 +146,8 @@ std::string ProcessLine(const std::string &input,
     //购买图书
     if (cmd == "buy") {
         //****************************
-        std::cout<<"PRINT BOOK\n";
-        bookManager.PRINT();
+//        std::cout<<"BUYYYYYYYYYYYYYYYYYYYYYYYYYYYY BOOK\n";
+//        bookManager.PRINT();
         //****************************
 
         double price = bookManager.Buy(tokenScanner);
@@ -149,10 +155,10 @@ std::string ProcessLine(const std::string &input,
         success = true;
     }
     if (cmd == "select") {
-        //****************************
-        std::cout<<"PRINT BOOK\n";
-        bookManager.PRINT();
-        //****************************
+//        ****************************
+//        std::cout<<"SELECTTTTTTTTTTTTTTTTTT BOOK\n";
+//        bookManager.PRINT();
+//        ****************************
         if (user.privilege <clerk) error("Invalid");
         //找书或新建
         std::pair<ISBN, long> pair = bookManager.Select(tokenScanner);
@@ -161,15 +167,16 @@ std::string ProcessLine(const std::string &input,
         success = true;
   }
     if (cmd == "modify") {
-        //****************************
-        std::cout<<"PRINT BOOK\n";
-        bookManager.PRINT();
-        //****************************
+//        ****************************
+//        std::cout<<"MODIFYYYYYYYYYYYYYYYYYYYYYYYYYYYY BOOK\n";
+//        bookManager.PRINT();
+//        ****************************
         //用户权限
         if (user.privilege < clerk) error("Invalid");
         //选中图书
         std::pair<ISBN, long> pair = loggingStatus.FindSelected();
-        bookManager.Modify(tokenScanner, pair);
+        Book book=bookManager.GetBook(pair.second);
+        bookManager.Modify(tokenScanner, book,pair.second);
         success = true;
     }
     if (cmd == "import") {

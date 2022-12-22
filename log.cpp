@@ -5,6 +5,13 @@
 #include "log.h"
 
 //Record--------------------------------------------------------
+Record::Record(int count, ID id, std::string str) {
+    num=count;
+    userID=id;
+    const char *tmp = str.c_str();
+    strcpy(operation, tmp);
+}
+
 int Record::GetKey(int) const {
     return num;
 }
@@ -107,10 +114,7 @@ void LogManager::PrintLog() {
 
 void LogManager::AddLog(const ID &id, const std::string &str) {
     ++count;
-    Record record;
-    record.num = count;
-    record.userID = id;
-    record.operation = str;
+    Record record(count,id,str);
     logList.Insert(count, record);
 }
 

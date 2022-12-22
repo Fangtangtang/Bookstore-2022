@@ -21,17 +21,24 @@ std::string ProcessLine(const std::string &input,
                         CurrentAccount &user);
 
 int main() {
+//    freopen("C:\repos\Bookstore-2022\bookstore-testcases\advanced\testcase1\1.in","r",stdin);
+    freopen("my.out","w",stdout);
+
     bool initialize_flag = Initialize();
     //接入系统的对象
     AccountManager accountManager;
     BookManager bookManager;
     LogManager logManager;
     TransactionManager transactionManager;
+    //***************************
+    accountManager.InitialAccount();
+    //***************************
     if (initialize_flag) {
         accountManager.InitialAccount();
 //        transactionManager.InitialTransation();
 //        logManager.InitialLog();
     }
+
     //登录栈
     LoggingStatus loggingStatus;
     //当前用户
@@ -61,6 +68,7 @@ int main() {
 bool Initialize() {
     std::fstream test;
     test.open("account_information");
+//    std::cout<<"TEST:"<<test.good()<<'\n';
     //文件不存在 初始化
     if (!test.good()) {
         test.close();
@@ -84,6 +92,9 @@ std::string ProcessLine(const std::string &input,
     std::string cmd;
     bool success = false;
     tokenScanner.NextToken(cmd);
+
+//    std::cout<<cmd<<": ";
+
     if (cmd == " ") return "";
     if (cmd == "quit" || cmd == "exit") {
         if (tokenScanner.HasMoreTokens()) error("Invalid");
@@ -117,7 +128,7 @@ std::string ProcessLine(const std::string &input,
     //删除账户
     if (cmd == "delete") {
         if (user.privilege != host) error("Invalid");
-        char *userID;
+        char userID[31];
         if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(userID);
         else error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");
@@ -128,28 +139,41 @@ std::string ProcessLine(const std::string &input,
     }
     //购买图书
     if (cmd == "buy") {
+        //****************************
+        std::cout<<"PRINT BOOK\n";
+        bookManager.PRINT();
+        //****************************
+
         double price = bookManager.Buy(tokenScanner);
         transactionManager.Income(price);
         success = true;
     }
     if (cmd == "select") {
-        if (user.privilege <= clerk) error("Invalid");
+        //****************************
+        std::cout<<"PRINT BOOK\n";
+        bookManager.PRINT();
+        //****************************
+        if (user.privilege <clerk) error("Invalid");
         //找书或新建
         std::pair<ISBN, long> pair = bookManager.Select(tokenScanner);
         //修改用户选书信息
         loggingStatus.SelectBook(pair);
         success = true;
-    }
+  }
     if (cmd == "modify") {
+        //****************************
+        std::cout<<"PRINT BOOK\n";
+        bookManager.PRINT();
+        //****************************
         //用户权限
-        if (user.privilege <= clerk) error("Invalid");
+        if (user.privilege < clerk) error("Invalid");
         //选中图书
         std::pair<ISBN, long> pair = loggingStatus.FindSelected();
         bookManager.Modify(tokenScanner, pair);
         success = true;
     }
     if (cmd == "import") {
-        if (user.privilege <= clerk) error("Invalid");
+        if (user.privilege < clerk) error("Invalid");
         std::pair<ISBN, long> pair = loggingStatus.FindSelected();
         double cast = bookManager.Import(tokenScanner, pair);
         transactionManager.Expense(cast);

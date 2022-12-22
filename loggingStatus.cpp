@@ -4,7 +4,8 @@
 #include "loggingStatus.h"
 
 void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, AccountManager &accountManager) {
-    char *userID, *password;
+    char userID[31], password[31];
+    memset(password, 0, sizeof(password));
     tokenScanner.NextToken(userID);
     //输入ID对应的account
     Account suAccount;
@@ -15,12 +16,12 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
     if (tokenScanner.HasMoreTokens()) {
         tokenScanner.NextToken(password);
         //密码错误
-        if (password != suAccount.password) error("Invalid");
+        if (strcmp(password, suAccount.password) != 0)error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //登录成功 加入登录栈
         ISBN isbn;//空图书
-        long l=0;
-        std::pair<ISBN,long> nullBook=std::make_pair(isbn,l);
+        long l = 0;
+        std::pair<ISBN, long> nullBook = std::make_pair(isbn, l);
         IDVector.push_back(suAccount.userID);
         privilegeVector.push_back(suAccount.privilege);
         bookVector.push_back(nullBook);
@@ -54,12 +55,12 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
     user = Flush();
 }
 
-void LoggingStatus::SelectBook(std::pair<ISBN,long> pair) {
+void LoggingStatus::SelectBook(std::pair<ISBN, long> pair) {
     bookVector.pop_back();
     bookVector.push_back(pair);
 }
 
-std::pair<ISBN,long>  LoggingStatus::FindSelected() {
+std::pair<ISBN, long> LoggingStatus::FindSelected() {
     return bookVector.back();
 }
 

@@ -7,6 +7,7 @@
 #define BOOKSTORE_LOG_H
 
 #include <vector>
+#include <cstring>
 #include "linkList.h"
 #include "tokenScanner.h"
 #include "error.h"
@@ -18,7 +19,13 @@ struct Record{
 
     ID userID;
 
-    std::string operation;
+    char operation[201]={'\0'};
+
+    Record()=default;
+
+    Record(int count,ID id,std::string str);
+
+    ~Record()=default;
 
     int GetKey(int) const;
 

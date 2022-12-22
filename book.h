@@ -222,6 +222,10 @@ public:
 
     ~BookManager()=default;
 
+    void PRINT(){
+        bookList.PrintList();
+    }
+
     //检索图书
     //show (-ISBN=[ISBN] | -name="[BookName]" | -author="[Author]" | -keyword="[Keyword]")?
     //无参数 直接打表

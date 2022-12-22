@@ -28,9 +28,9 @@ class LinkList {
 public:
     LinkList(const std::string &file_name) {
 
-        r_w_LinkList.open(file_name);
+//        r_w_LinkList.open(file_name);
 
-//        r_w_LinkList.open("1", std::fstream::trunc);
+        r_w_LinkList.open(file_name, std::fstream::trunc);
 
         if (!r_w_LinkList.good()) {
             //create headNode
@@ -51,9 +51,15 @@ public:
         }
         r_w_LinkList.seekg(head);
         r_w_LinkList.read(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
+
+//        std::cout<<file_name<<" "<<headNode1.next<<" "<<headNode1.count<<'\n';
     }
 
-    ~LinkList() = default;
+    ~LinkList() {
+//        std::cout<<"breakdown\n";
+        r_w_LinkList.seekp(head);
+        r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
+    }
 
     void PrintList() {
         BlockNode blockNode;
@@ -417,7 +423,7 @@ private:
     };
 
     HeadNode headNode1;
-    long head;//头节点位置
+    long head=0;//头节点位置
 
     //LinkList读写的文件流对象 在LinkList构造时和相关文件关联
     std::fstream r_w_LinkList;

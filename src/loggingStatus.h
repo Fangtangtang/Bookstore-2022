@@ -15,6 +15,12 @@
 
 class LoggingStatus{
 public:
+    void Clear(){
+        IDVector.clear();
+        privilegeVector.clear();
+        bookVector.clear();
+    }
+
     void Su(TokenScanner &tokenScanner,CurrentAccount &user,AccountManager &accountManager);
 
     //登出

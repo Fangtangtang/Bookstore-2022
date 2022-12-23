@@ -227,7 +227,18 @@ public:
     ~BookManager()=default;
 
     void PRINT(){
+        std::cout<<"\nBOOKBOOKBOOKBOOKBOOK\n";
         bookList.PrintList();
+        std::cout<<"\n---------------------------------------------------------\n";
+        std::cout<<"\nNAMENAMENAMENAMENAME\n";
+        nameList.PrintList();
+        std::cout<<"\n---------------------------------------------------------\n";
+        std::cout<<"AUTHORRRRRRRRRRRRRRRRRRR\n";
+        authorList.PrintList();
+        std::cout<<"\n---------------------------------------------------------\n";
+        std::cout<<"\nKEYYYYYYYYYYYYYYYYYYYY\n";
+        keywordList.PrintList();
+        std::cout<<"\nENDENDENDEND\n\n";
     }
 
     //检索图书

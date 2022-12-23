@@ -81,7 +81,7 @@ bool Initialize() {
     }
 }
 
-int c = 8, a = 0;
+int c =711, a = 0;
 
 //返回操作语句
 std::string ProcessLine(const std::string &input,
@@ -104,10 +104,13 @@ std::string ProcessLine(const std::string &input,
 //    }
 //    std::cout << a << " " << cmd << ": ";
 
+    if(cmd=="clear") {
+        loggingStatus.Clear();
+    }
     if (cmd == " ") return "";
     if (cmd == "quit" || cmd == "exit") {
-
-//        std::cout<<"@@@@@@@@@@@@\n";
+//
+//        std::cout<<"\n@@@@@@@@@@@@\n";
 //        bookManager.PRINT();
 //        std::cout<<"@@@@@@@@@@@@\n\n";
 

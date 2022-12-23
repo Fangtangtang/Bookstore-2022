@@ -1,3 +1,8 @@
 cmake-build-debug/
 .idea
 bookstore-testcases/
+CMakeFiles
+code
+Makefile
+CMakeCache.txt
+cmake_install.cmake

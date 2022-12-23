@@ -268,9 +268,9 @@ public:
     //修改quantity(in ISBN,name,author)
     double Import(TokenScanner &tokenScanner,ISBN isbn);
 
-    Book GetBook(long iter);
+    void GetBook(Book &book,long iter);
 
-    Book GetBook(ISBN isbn,long &iter);
+     void GetBook(Book &book,ISBN isbn,long &iter);
 
 private:
     //类中用（）会和声明函数歧义

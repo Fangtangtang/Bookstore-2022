@@ -190,7 +190,8 @@ std::string ProcessLine(const std::string &input,
         //选中图书
         ISBN isbn = loggingStatus.FindSelected();
         long iter = 0;
-        Book book = bookManager.GetBook(isbn, iter);
+        Book book;
+        bookManager.GetBook(book,isbn, iter);
         bool change_ISBN_flag = bookManager.Modify(tokenScanner, book, iter, isbn);
         if (change_ISBN_flag) loggingStatus.SelectBook(isbn);
         success = true;
@@ -199,7 +200,8 @@ std::string ProcessLine(const std::string &input,
         if (user.privilege < clerk) error("Invalid");
         ISBN isbn = loggingStatus.FindSelected();
         long iter = 0;
-        Book book = bookManager.GetBook(isbn, iter);
+        Book book;
+        bookManager.GetBook(book,isbn, iter);
         double cast = bookManager.Import(tokenScanner, isbn);
         transactionManager.Expense(cast);
         success = true;

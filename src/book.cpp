@@ -408,15 +408,14 @@ long BookManager::AddBook(ISBN isbn) {
     newBook.bookISBN = isbn;
     return bookList.Insert(isbn, newBook);
 }
-
-Book BookManager::GetBook(long iter) {
-    return bookList.ReadValue(iter);
+void BookManager::GetBook(Book &book,long iter) {
+    bookList.ReadValue(book,iter);
 }
 
-Book BookManager::GetBook(ISBN isbn, long &iter) {
+void BookManager::GetBook(Book &book,ISBN isbn, long &iter) {
     std::pair<Book, bool> pair = bookList.Find(isbn, iter);
     if (!pair.second) error("Invalid");
-    return pair.first;
+    book=pair.first;
 }
 
 
@@ -678,5 +677,4 @@ double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {
     RewriteAuthor(book, key2);
 //    PRINT();
     return totalCast;
-
 }

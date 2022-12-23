@@ -32,6 +32,9 @@ public:
     //寻找当前选中的书
     ISBN FindSelected();
 
+    //修改了图书中的ISBN
+    void ChangeISBN(ISBN isbn,ISBN newISBN);
+
     bool Find(const ID& id);
 private:
     //登录用户ID栈

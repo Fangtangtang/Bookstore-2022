@@ -13,10 +13,12 @@ TokenScanner::TokenScanner(const std::string &str) {
     tokenStart = tokenEnd = 0;
 }
 
-void TokenScanner::SetInput(const std::string &str) {
-    input = str;
-    length = str.length();
-    tokenStart = tokenEnd = 0;
+void TokenScanner::Initialize() {
+    while (input[tokenStart] == ' ') {
+        ++tokenStart;
+        if(tokenStart==length) break;
+    }
+    tokenEnd=tokenStart;
 }
 
 bool TokenScanner::HasMoreTokens() {

@@ -15,7 +15,7 @@ public:
 
     ~TokenScanner()=default;
 
-    void SetInput(const std::string& str);
+    void Initialize();
 
     //是否仍有输入
     bool HasMoreTokens() ;

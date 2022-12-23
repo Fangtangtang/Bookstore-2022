@@ -20,7 +20,7 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //登录成功 加入登录栈
         ISBN isbn;//空图书
-         IDVector.push_back(suAccount.userID);
+        IDVector.push_back(suAccount.userID);
         privilegeVector.push_back(suAccount.privilege);
         bookVector.push_back(isbn);
         //更新当前user
@@ -31,8 +31,10 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
     //未输入密码
     if (user.privilege > suAccount.privilege) {
         //登录成功 加入登录栈
+        ISBN isbn;//空图书
         IDVector.push_back(suAccount.userID);
         privilegeVector.push_back(suAccount.privilege);
+        bookVector.push_back(isbn);
         //更新当前user
         user.privilege = suAccount.privilege;
         user.userID = suAccount.userID;
@@ -46,6 +48,9 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
     //当前无登录用户
     if (IDVector.empty()) error("Invalid");
     //修改登录栈
+
+//    std::cout << "BOOK:" << bookVector.size() << "\n";
+
     IDVector.pop_back();
     privilegeVector.pop_back();
     bookVector.pop_back();
@@ -54,6 +59,9 @@ void LoggingStatus::Logout(TokenScanner &tokenScanner, CurrentAccount &user) {
 }
 
 void LoggingStatus::SelectBook(ISBN isbn) {
+
+//    std::cout << "SEBOOK:" << bookVector.size() << "\n";
+
     bookVector.pop_back();
     bookVector.push_back(isbn);
 }
@@ -62,12 +70,18 @@ ISBN LoggingStatus::FindSelected() {
     return bookVector.back();
 }
 
+void LoggingStatus::ChangeISBN(ISBN isbn, ISBN newISBN) {
+    for (auto &i: bookVector) {
+        if (i == isbn) i = newISBN;
+    }
+}
+
 CurrentAccount LoggingStatus::Flush() {
     CurrentAccount tmp;
-    if(IDVector.empty())  {
+    if (IDVector.empty()) {
         tmp.privilege = none;
         return tmp;
-    }else{
+    } else {
         tmp.privilege = privilegeVector.back();
         if (!IDVector.empty()) {
             tmp.userID = IDVector.back();

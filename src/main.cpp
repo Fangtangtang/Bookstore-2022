@@ -60,9 +60,11 @@ int main() {
             std::cout << ex.getMessage() << std::endl;
         }
         if(operation=="RETURN") return 0;
-        //向日志添加操作信息
-        if (operation.empty()) operation = "FAILED";
-        logManager.AddLog(userID, operation);
+        if(operation!="BLANK"){
+            //向日志添加操作信息
+            if (operation.empty()) operation = "FAILED";
+            logManager.AddLog(userID, operation);
+        }
     }
 }
 
@@ -81,7 +83,7 @@ bool Initialize() {
     }
 }
 
-int c =711, a = 0;
+int c =17, a = 0;
 
 //返回操作语句
 std::string ProcessLine(const std::string &input,
@@ -92,6 +94,8 @@ std::string ProcessLine(const std::string &input,
                         LoggingStatus &loggingStatus,
                         CurrentAccount &user) {
     TokenScanner tokenScanner(input);
+    tokenScanner.Initialize();
+    if(!tokenScanner.HasMoreTokens())return "BLANK";
     //读入命令
     std::string cmd;
     bool success = false;
@@ -107,7 +111,6 @@ std::string ProcessLine(const std::string &input,
     if(cmd=="clear") {
         loggingStatus.Clear();
     }
-    if (cmd == " ") return "";
     if (cmd == "quit" || cmd == "exit") {
 //
 //        std::cout<<"\n@@@@@@@@@@@@\n";
@@ -188,12 +191,15 @@ std::string ProcessLine(const std::string &input,
         //用户权限
         if (user.privilege < clerk) error("Invalid");
         //选中图书
-        ISBN isbn = loggingStatus.FindSelected();
+        ISBN isbn = loggingStatus.FindSelected(),newISBN;
         long iter = 0;
         Book book;
         bookManager.GetBook(book,isbn, iter);
-        bool change_ISBN_flag = bookManager.Modify(tokenScanner, book, iter, isbn);
-        if (change_ISBN_flag) loggingStatus.SelectBook(isbn);
+        bool change_ISBN_flag = bookManager.Modify(tokenScanner, book, iter, newISBN);
+        if (change_ISBN_flag){
+//            loggingStatus.SelectBook(isbn);
+            loggingStatus.ChangeISBN(isbn,newISBN);
+        }
         success = true;
     }
     if (cmd == "import") {

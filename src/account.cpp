@@ -151,6 +151,9 @@ void AccountManager::AddUser(TokenScanner &tokenScanner, Privilege &privilege) {
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
+    ID id(userID);
+    long iter;
+    if(accountList.Find(id,iter).second) error("Invalid");
     Privilege newPri = toPrivilege(pri);
     if (newPri >= privilege)error("Invalid");
     CreateAccount(userID, password, newPri, name);

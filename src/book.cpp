@@ -10,6 +10,10 @@ ISBN::ISBN() {
 }
 
 ISBN::ISBN(char *isbn) {
+//    if(strlen(isbn)>20)error("Invalid");
+//    for(int i=0;i< strlen(isbn);++i){
+//        if (isbn[i] < 32 || isbn[i] == 127) error("Invalid");
+//    }
     strcpy(bookISBN, isbn);
 }
 
@@ -37,6 +41,10 @@ Name::Name() {
 }
 
 Name::Name(char *name1) {
+//    if(strlen(name1)>60) error("Invalid");
+//    for(int i=0;i< strlen(name1);++i){
+//        if (name1[i] < 32 || name1[i] == 127||name1[i] == '"' ) error("Invalid");
+//    }
     strcpy(name, name1);
 }
 
@@ -61,6 +69,10 @@ Author::Author() {
 }
 
 Author::Author(char *author1) {
+//    if(strlen(author1)>60) error("Invalid");
+//    for(int i=0;i< strlen(author1);++i){
+//        if (author1[i] < 32 || author1[i] == 127||author1[i] == '"' ) error("Invalid");
+//    }
     strcpy(author, author1);
 }
 
@@ -85,6 +97,7 @@ Keyword::Keyword() {
 }
 
 Keyword::Keyword(char *keyword1) {
+    if(strlen(keyword1)>60) error("Invalid");
     for(int i=0;i< strlen(keyword1);++i){
         if(keyword1[i]=='|') error("Invalid");
     }
@@ -276,10 +289,6 @@ Author Book::GetIndex(Author author1) const {
 
 void BookManager::Show(TokenScanner &tokenScanner) {
     //无附加 遍历bookList
-
-//    std::cout << "BEFOREEEEE    SHOWWWWWWWWWWWW: \n";
-//    PRINT();
-//    std::cout << "SHOWWWWWWWWWWWW: \n\n";
 
     if (!tokenScanner.HasMoreTokens()) {
         bookList.PrintList();

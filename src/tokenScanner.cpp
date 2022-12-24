@@ -55,9 +55,10 @@ void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
             if (input[tokenEnd] == '"')error("Invalid");
         }
         ++tokenEnd;
+        if (tokenEnd - tokenStart > validSize)error("Invalid");
         if (tokenEnd == length) break;
     }
-    if (tokenEnd - tokenStart > validSize)error("Invalid");
+//    if (tokenEnd - tokenStart > validSize)error("Invalid");
     std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
     operation = operation + str + " ";
     const char *tmp = str.c_str();
@@ -89,7 +90,7 @@ void TokenScanner::SpecialNextToken(char *token) {
 
 void TokenScanner::NextToken(int &intNum) {
     intNum = 0;
-    long long num;
+    long long num=0;
     while (input[tokenEnd] != ' ') {
         num *= 10;
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
@@ -148,6 +149,7 @@ void TokenScanner::TakeType(std::string &str) {
         ++tokenEnd;
     }
     if (input[tokenEnd] != '=') error("Invalid");
+    if (input[tokenEnd+1] == ' ') error("Invalid");
     str = input.substr(tokenStart, tokenEnd - tokenStart);
     operation = operation + "-" + str + "=";
     UpdatePos();

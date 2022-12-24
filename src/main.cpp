@@ -83,7 +83,7 @@ bool Initialize() {
     }
 }
 
-int c =17, a = 0;
+int c =6, a = 0;
 
 //返回操作语句
 std::string ProcessLine(const std::string &input,

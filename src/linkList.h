@@ -64,12 +64,12 @@ public:
     void PrintList() {
         BlockNode blockNode;
         long iter = headNode1.next;//第一个节点
+        if (iter == 0) std::cout << '\n';
         while (iter != 0) {
 //            std::cout << "####\n";
-             ReadNode(blockNode,iter);
+            ReadNode(blockNode, iter);
             for (int i = 0; i < blockNode.NodeHead.size; ++i)
                 blockNode.Array[i].Print();
-//            std::cout << '\n';
             iter = blockNode.NodeHead.next;
         }
     }
@@ -96,9 +96,9 @@ public:
         }
             //之后插元素
         else {
-            ReadHead(head2,iter);
+            ReadHead(head2, iter);
             if (head2.max > key) {
-                ReadNode(blockNode,iter);
+                ReadNode(blockNode, iter);
                 num = blockNode.Insert(key, ele);
                 insert_flag = true;
                 if (blockNode.NodeHead.size == blockSize)break_flag = true;
@@ -111,11 +111,11 @@ public:
                 iter = head2.next;
                 while (iter != 0) {//向后遍历
                     head1 = head2;
-                    ReadHead(head2,iter);
+                    ReadHead(head2, iter);
                     if (key >= head1.min && head2.min >= key) {
                         if (head1.max > key) {
                             iter = head2.pre;
-                            ReadNode(blockNode,iter);
+                            ReadNode(blockNode, iter);
                             num = blockNode.Insert(key, ele);//插入当前块的array
                             if (blockNode.NodeHead.size == blockSize)break_flag = true;
                             if (break_flag) {
@@ -124,7 +124,7 @@ public:
                             WriteNode(blockNode, iter);
                         }
                         if (key > head1.max) {
-                            ReadNode(blockNode,iter);
+                            ReadNode(blockNode, iter);
                             num = blockNode.Insert(key, ele);//插入后一块的array
                             if (blockNode.NodeHead.size == blockSize)break_flag = true;
                             if (break_flag) {
@@ -140,7 +140,7 @@ public:
                     //曾对尾插做过一些愚蠢的多余特判 导致会在same index顺序插入时不断加新块！！！！
                     if (head1.next != 0)iter = head1.next;
                     else iter = headNode1.next;
-                    ReadNode(blockNode,iter);
+                    ReadNode(blockNode, iter);
                     num = blockNode.Insert(key, ele);//插入后一块的array
                     if (blockNode.NodeHead.size == blockSize)break_flag = true;
                     if (break_flag) BreakNode(iter, blockNode);
@@ -158,22 +158,22 @@ public:
         BlockNode blockNode;
         Head head1;
         while (iter != 0) {
-            ReadHead(head1,iter);
+            ReadHead(head1, iter);
             if (key >= head1.min && head1.max >= key)break;
             iter = head1.next;
         }
         if (iter == 0) return false;
-        ReadNode(blockNode,iter);
+        ReadNode(blockNode, iter);
         bool b = blockNode.Delete(key);
         if (!b) return false;
         if (blockNode.NodeHead.size < blockSize / 2) {
             Head preHead, nextHead;
             BlockNode preNode, nextNode;
             if (blockNode.NodeHead.pre != 0) {
-                 ReadHead(preHead,blockNode.NodeHead.pre);
+                ReadHead(preHead, blockNode.NodeHead.pre);
             }
             if (blockNode.NodeHead.next != 0) {
-                ReadHead(nextHead ,blockNode.NodeHead.next);
+                ReadHead(nextHead, blockNode.NodeHead.next);
             }
             if (blockNode.NodeHead.size == 0) {
                 if (blockNode.NodeHead.pre == 0) {
@@ -196,7 +196,7 @@ public:
             }
             index indexSign;
             if (preHead.size > blockSize / 2) {
-                  ReadNode(preNode,blockNode.NodeHead.pre);
+                ReadNode(preNode, blockNode.NodeHead.pre);
                 blockNode.Insert(preNode.NodeHead.max, preNode.Array[preNode.NodeHead.size - 1]);
 
                 preNode.Delete(preNode.Array[preNode.NodeHead.size - 1].GetKey(indexSign));
@@ -205,7 +205,7 @@ public:
                 return true;
             }
             if (nextHead.size > blockSize / 2) {
-                  ReadNode(nextNode,blockNode.NodeHead.next);
+                ReadNode(nextNode, blockNode.NodeHead.next);
                 blockNode.Insert(nextNode.NodeHead.min, nextNode.Array[0]);
                 nextNode.Delete(nextNode.Array[0].GetKey(indexSign));
                 WriteNode(nextNode, blockNode.NodeHead.next);
@@ -213,8 +213,8 @@ public:
                 return true;
             }
             if (blockNode.NodeHead.next != 0) {
-                  ReadNode(nextNode,blockNode.NodeHead.next);
-                  ReadNode(preNode,blockNode.NodeHead.pre);
+                ReadNode(nextNode, blockNode.NodeHead.next);
+                ReadNode(preNode, blockNode.NodeHead.pre);
                 CombineNode(preNode, blockNode, nextNode);
                 return true;
             }
@@ -227,7 +227,7 @@ public:
         long iter = headNode1.next;
         Head head1;
         while (iter != 0) {
-              ReadHead(head1,iter);
+            ReadHead(head1, iter);
             if (index1 >= head1.min.GetIndex(index1) && head1.max.GetIndex(index1) >= index1)break;
             iter = head1.next;
         }
@@ -236,7 +236,7 @@ public:
             return;
         }
         BlockNode blockNode;
-         ReadNode(blockNode,iter);
+        ReadNode(blockNode, iter);
         int i = 0;
         while (!(index1 == blockNode.Array[i].GetIndex(index1))) {
             ++i;
@@ -250,7 +250,7 @@ public:
 //            std::cout << blockNode.Array[i].GetValue() << " ";
             ++i;
             if (i == blockNode.NodeHead.size) {//结束一个块
-                  ReadNode(blockNode,blockNode.NodeHead.next);
+                ReadNode(blockNode, blockNode.NodeHead.next);
                 i = 0;
             }
             if (!(index1 == blockNode.Array[i].GetIndex(index1))) return;//找完
@@ -264,7 +264,7 @@ public:
         long iter = headNode1.next;
         Head head1;
         while (iter != 0) {
-              ReadHead(head1,iter);
+            ReadHead(head1, iter);
             if (index1 >= head1.min.GetIndex(index1) && head1.max.GetIndex(index1) >= index1)break;
             iter = head1.next;
         }
@@ -272,7 +272,7 @@ public:
             return vec;
         }
         BlockNode blockNode;
-        ReadNode(blockNode,iter);
+        ReadNode(blockNode, iter);
         int i = 0;
         while (!(index1 == blockNode.Array[i].GetIndex(index1))) {
             ++i;
@@ -284,7 +284,7 @@ public:
             vec.push_back(blockNode.Array[i]);
             ++i;
             if (i == blockNode.NodeHead.size) {//结束一个块
-                  ReadNode(blockNode,blockNode.NodeHead.next);
+                ReadNode(blockNode, blockNode.NodeHead.next);
                 i = 0;
             }
             if (!(index1 == blockNode.Array[i].GetIndex(index1))) return vec;//找完
@@ -299,7 +299,7 @@ public:
         Value value;
         index indexSign;
         while (iter != 0) {
-             ReadHead(head1,iter);
+            ReadHead(head1, iter);
             if (key >= head1.min && head1.max >= key)break;
             iter = head1.next;
         }
@@ -307,7 +307,7 @@ public:
             return std::make_pair(value, false);
         }
         BlockNode blockNode;
-        ReadNode(blockNode,iter);
+        ReadNode(blockNode, iter);
         int i = 0;
         while (!(key == (blockNode.Array[i].GetKey(indexSign)))) {
             ++i;
@@ -326,12 +326,12 @@ public:
         long iter = headNode1.next;
         Head head1;
         while (iter != 0) {
-            ReadHead(head1,iter);
+            ReadHead(head1, iter);
             if (startKey >= head1.min && head1.max >= startKey)break;
             iter = head1.next;
         }
         BlockNode blockNode;
-        ReadNode(blockNode,iter);
+        ReadNode(blockNode, iter);
         int i = 0;
         index indexSign;
         while (!(startKey == blockNode.Array[i].GetKey(indexSign))) {
@@ -342,14 +342,14 @@ public:
             ++i;
             if (i == blockNode.NodeHead.size) {//结束一个块
                 if (blockNode.NodeHead.next == 0) return eleGroup;
-                  ReadNode(blockNode,blockNode.NodeHead.next);
+                ReadNode(blockNode, blockNode.NodeHead.next);
                 i = 0;
             }
         }
     }
 
     //读取一个数组元素
-    void ReadValue(Value &value,long iter) {
+    void ReadValue(Value &value, long iter) {
         r_w_LinkList.seekg(iter);
         r_w_LinkList.read(reinterpret_cast<char *>(&value), sizeof(value));
     }
@@ -438,13 +438,13 @@ private:
     std::fstream r_w_LinkList;
 
     //Read iter指向块链节点
-    void ReadNode(BlockNode &blockNode,long iter) {
+    void ReadNode(BlockNode &blockNode, long iter) {
         r_w_LinkList.seekg(iter);
         r_w_LinkList.read(reinterpret_cast<char *> (&blockNode), sizeof(BlockNode));
     }
 
     //Read iter指向块链的头部
-    void ReadHead(Head &nodeHead,long iter) {
+    void ReadHead(Head &nodeHead, long iter) {
         r_w_LinkList.seekg(iter);
         r_w_LinkList.read(reinterpret_cast<char *> (&nodeHead), sizeof(Head));
     }
@@ -483,8 +483,8 @@ private:
         newBlock.NodeHead.pre = iter;
         blockNode.NodeHead.next = newIter;
         if (newBlock.NodeHead.next != 0) {
-            Head head1 ;
-            ReadHead(head1,newBlock.NodeHead.next);
+            Head head1;
+            ReadHead(head1, newBlock.NodeHead.next);
             head1.pre = newIter;
             WriteHead(head1, newBlock.NodeHead.next);
         }

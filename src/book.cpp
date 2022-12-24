@@ -85,7 +85,9 @@ Keyword::Keyword() {
 }
 
 Keyword::Keyword(char *keyword1) {
-    
+    for(int i=0;i< strlen(keyword1);++i){
+        if(keyword1[i]=='|') error("Invalid");
+    }
     strcpy(keyword, keyword1);
 }
 

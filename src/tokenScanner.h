@@ -6,7 +6,7 @@
 #define BOOKSTORE_TOKENSCANNER_H
 
 #include <string>
-
+#include <cctype>
 class TokenScanner{
 public:
     TokenScanner()=default;

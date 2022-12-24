@@ -85,6 +85,7 @@ Keyword::Keyword() {
 }
 
 Keyword::Keyword(char *keyword1) {
+    
     strcpy(keyword, keyword1);
 }
 
@@ -151,6 +152,7 @@ Author Author_ISBN::GetIndex(Author) const {
 }
 
 //Keyword_ISBN--------------------------------------------------
+
 
 bool Keyword_ISBN::operator>(const Keyword_ISBN &right) const {
     if (keyword > right.keyword || (keyword == right.keyword && bookISBN > right.bookISBN))return true;

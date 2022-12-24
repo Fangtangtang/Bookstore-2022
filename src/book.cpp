@@ -97,9 +97,9 @@ Keyword::Keyword() {
 }
 
 Keyword::Keyword(char *keyword1) {
-    if(strlen(keyword1)>60) error("Invalid");
-    for(int i=0;i< strlen(keyword1);++i){
-        if(keyword1[i]=='|') error("Invalid");
+    if (strlen(keyword1) > 60) error("Invalid");
+    for (int i = 0; i < strlen(keyword1); ++i) {
+        if (keyword1[i] == '|') error("Invalid");
     }
     strcpy(keyword, keyword1);
 }
@@ -301,7 +301,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     memset(token, 0, sizeof(token));
     long iter;
     if (type == "ISBN") {
-        tokenScanner.NextToken(token,20, true);
+        tokenScanner.NextToken(token, 20, true);
         ISBN isbn(token);
         std::pair<Book, bool> pair = bookList.Find(isbn, iter);
         if (pair.second) pair.first.Print();
@@ -322,11 +322,6 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "keyword") {
-
-//        std::cout << "KEEEEEEEEEEEEEEEEEEEEEEY: \n";
-//        bookList.PrintList();
-//keywordList.PrintList();
-//        std::cout << "KEEEEEEEEEEEEEEEEEEEEEEY: \n\n";
         tokenScanner.Quote(token);
         //构造时判断token是否合法
         Keyword index(token);
@@ -344,9 +339,6 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         }
         success = true;
     }
-//    std::cout << "AFTER    SHOWWWWWWWWWWWW: \n";
-//    PRINT();
-//    std::cout << "SHOWWWWWWWWWWWW: \n\n";
 
     if (!success) error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
@@ -356,7 +348,7 @@ double BookManager::Buy(TokenScanner &tokenScanner) {
     char bookISBN[21];
     memset(bookISBN, 0, sizeof(bookISBN));
     int quantity;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN,20, true);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN, 20, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
     else error("Invalid");
@@ -385,14 +377,14 @@ void BookManager::Update(Book book, long iter) {
     Name_ISBN nameIbsn;
     nameIbsn.name = book.name;
     nameIbsn.bookISBN = book.bookISBN;
-    RewriteName(book,nameIbsn);
+    RewriteName(book, nameIbsn);
 //    nameList.Find(nameIbsn, iter);
 //    nameList.WriteValue(book, iter);
     //authorList
     Author_ISBN authorIbsn;
     authorIbsn.author = book.author;
     authorIbsn.bookISBN = book.bookISBN;
-    RewriteAuthor(book,authorIbsn);
+    RewriteAuthor(book, authorIbsn);
 //    authorList.Find(authorIbsn, iter);
 //    authorList.WriteValue(book, iter);
 }
@@ -401,7 +393,7 @@ ISBN BookManager::Select(TokenScanner &tokenScanner) {
     char isbn[21];
     memset(isbn, 0, sizeof(isbn));
     long iter;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(isbn,20, true);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(isbn, 20, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens())error("Invalid");
     ISBN bookISBN(isbn);
@@ -421,14 +413,15 @@ long BookManager::AddBook(ISBN isbn) {
     newBook.bookISBN = isbn;
     return bookList.Insert(isbn, newBook);
 }
-void BookManager::GetBook(Book &book,long iter) {
-    bookList.ReadValue(book,iter);
+
+void BookManager::GetBook(Book &book, long iter) {
+    bookList.ReadValue(book, iter);
 }
 
-void BookManager::GetBook(Book &book,ISBN isbn, long &iter) {
+void BookManager::GetBook(Book &book, ISBN isbn, long &iter) {
     std::pair<Book, bool> pair = bookList.Find(isbn, iter);
     if (!pair.second) error("Invalid");
-    book=pair.first;
+    book = pair.first;
 }
 
 
@@ -464,7 +457,7 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
         tokenScanner.TakeType(type);
         if (type == "ISBN") {
             if (change_ISBN) error("Invalid");
-            tokenScanner.NextToken(token,20, true);
+            tokenScanner.NextToken(token, 20, true);
             ISBN newISBN(token);
             //不可重复
             long iter;
@@ -572,9 +565,14 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
     int start = 0;
     std::string keyword;
     int end = 0;
+    if(str[0]=='|') error("Invalid");
     while (true) {
         while (str[end] != '|' && end < str.length()) {
             ++end;
+        }
+        if (str[end] == '|') {
+            if (end < str.length() - 1 && str[end + 1] == '|') error("Invalid");
+            if(end==str.length() - 1) error("Invalid");
         }
         keyword = str.substr(start, end - start);
         if (std::find(keywordGroup.begin(), keywordGroup.end(), keyword) != keywordGroup.end())
@@ -650,14 +648,14 @@ void BookManager::RewriteISBN(const Book &book, const long &foreIter) {
 
 void BookManager::RewriteName(const Book &book, const Name_ISBN &key) {
     long iter;
-    std::pair<Book, bool>pair=nameList.Find(key, iter);
-    if(pair.second) nameList.WriteValue(book, iter);
+    std::pair<Book, bool> pair = nameList.Find(key, iter);
+    if (pair.second) nameList.WriteValue(book, iter);
 }
 
 void BookManager::RewriteAuthor(const Book &book, const Author_ISBN &key) {
     long iter;
-    std::pair<Book, bool>pair=authorList.Find(key, iter);
-    if(pair.second) authorList.WriteValue(book, iter);
+    std::pair<Book, bool> pair = authorList.Find(key, iter);
+    if (pair.second) authorList.WriteValue(book, iter);
 }
 
 double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {

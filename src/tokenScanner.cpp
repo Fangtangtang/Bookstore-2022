@@ -122,10 +122,13 @@ void TokenScanner::NextToken(double &doubleNum) {
         } else error("Invalid");
     }
     double mul = 1;
+    int count=0;
     while (tokenEnd < length && input[tokenEnd] != ' ') {
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
             mul *= 0.1;
             doubleNum += (input[tokenEnd] - '0') * mul;
+            ++count;
+            if(count ==3)error("Invalid");
             ++tokenEnd;
             if (tokenEnd == length) break;
         } else error("Invalid");

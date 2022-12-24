@@ -24,8 +24,10 @@ public:
     void NextToken(std::string &str);
 
     //下一个合法token为char*
-    void NextToken(char* token);
+    void NextToken(char* token,int validSize,bool allowQuote);
 
+    //特殊要求的char*
+    void SpecialNextToken(char* token);
     //下一个合法token为int
     void NextToken(int &intNum);
 

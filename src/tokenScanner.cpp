@@ -16,9 +16,9 @@ TokenScanner::TokenScanner(const std::string &str) {
 void TokenScanner::Initialize() {
     while (input[tokenStart] == ' ') {
         ++tokenStart;
-        if(tokenStart==length) break;
+        if (tokenStart == length) break;
     }
-    tokenEnd=tokenStart;
+    tokenEnd = tokenStart;
 }
 
 bool TokenScanner::HasMoreTokens() {
@@ -29,30 +29,59 @@ bool TokenScanner::HasMoreTokens() {
 void TokenScanner::NextToken(std::string &str) {
     while (input[tokenStart] == ' ') {
         ++tokenStart;
-        if(tokenStart==length-1) break;
+        if (tokenStart == length - 1) break;
     }
-    tokenEnd=tokenStart;
+    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
+        if (input[tokenEnd] < 32 || input[tokenEnd] == 127) error("Invalid");
         ++tokenEnd;
-        if(tokenEnd==length) break;
+        if (tokenEnd == length) break;
     }
-    str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+str+" ";
+    str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + str + " ";
     UpdatePos();
 }
-void TokenScanner::NextToken(char *token) {
+
+void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
     //前导空格
     while (input[tokenStart] == ' ') {
         ++tokenStart;
-        if(tokenStart==length-1) break;
+        if (tokenStart == length - 1) break;
     }
-    tokenEnd=tokenStart;
+    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
+        if (input[tokenEnd] < 32 || input[tokenEnd] == 127) error("Invalid");
+        if (!allowQuote) {
+            if (input[tokenEnd] == '"')error("Invalid");
+        }
         ++tokenEnd;
-        if(tokenEnd==length) break;
+        if (tokenEnd == length) break;
     }
-    std::string str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+str+" ";
+    if (tokenEnd - tokenStart > validSize)error("Invalid");
+    std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + str + " ";
+    const char *tmp = str.c_str();
+    strcpy(token, tmp);
+    UpdatePos();
+}
+
+void TokenScanner::SpecialNextToken(char *token) {
+    while (input[tokenStart] == ' ') {
+        ++tokenStart;
+        if (tokenStart == length - 1) break;
+    }
+    tokenEnd = tokenStart;
+    while (input[tokenEnd] != ' ') {
+        if ((input[tokenEnd] - '0' < 10 && input[tokenEnd] - '0' >= 0) || input[tokenEnd] == '_' ||
+            (input[tokenEnd] - 'a' >= 0 && input[tokenEnd] - 'a' < 26) ||
+            (input[tokenEnd] - 'A' >= 0 && input[tokenEnd] - 'A' < 26)) {
+            ++tokenEnd;
+            if (tokenEnd == length) break;
+        } else error("Invalid");
+    }
+    if (tokenEnd - tokenStart > 30)error("Invalid");
+    std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + str + " ";
     const char *tmp = str.c_str();
     strcpy(token, tmp);
     UpdatePos();
@@ -60,16 +89,19 @@ void TokenScanner::NextToken(char *token) {
 
 void TokenScanner::NextToken(int &intNum) {
     intNum = 0;
+    long long num;
     while (input[tokenEnd] != ' ') {
-        intNum *= 10;
-        if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0'<10) {
-            intNum += (input[tokenEnd] - '0');
+        num *= 10;
+        if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
+            num += (input[tokenEnd] - '0');
             ++tokenEnd;
-            if(tokenEnd==length) break;
+            if (tokenEnd == length) break;
         } else error("Invalid");
     }
-    std::string str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+str+" ";
+    if (num > 2147483647)error("Invalid");
+    intNum=int(num);
+    std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + str + " ";
     UpdatePos();
 }
 
@@ -82,62 +114,68 @@ void TokenScanner::NextToken(double &doubleNum) {
             break;
         }
         doubleNum *= 10;
-        if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0'<10) {
+        if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
             doubleNum += (input[tokenEnd] - '0');
             ++tokenEnd;
-            if(tokenEnd==length) break;
+            if (tokenEnd == length) break;
         } else error("Invalid");
     }
     double mul = 1;
-    while (tokenEnd<length&&input[tokenEnd] != ' ') {
-        if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0'<10) {
+    while (tokenEnd < length && input[tokenEnd] != ' ') {
+        if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
             mul *= 0.1;
             doubleNum += (input[tokenEnd] - '0') * mul;
             ++tokenEnd;
-            if(tokenEnd==length) break;
+            if (tokenEnd == length) break;
         } else error("Invalid");
     }
-    std::string str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+str+" ";
+    if (tokenEnd - tokenStart > 13) error("Invalid");
+    std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + str + " ";
     UpdatePos();
 }
 
 void TokenScanner::TakeType(std::string &str) {
     while (input[tokenStart] == ' ') {
         ++tokenStart;
-        if(tokenStart==length-1) break;
+        if (tokenStart == length - 1) break;
     }
-    if(input[tokenStart]!='-') error("Invalid");
+    if (input[tokenStart] != '-') error("Invalid");
     ++tokenStart;
-    tokenEnd=tokenStart;
-    while (input[tokenEnd] != '='&&input[tokenEnd] !=' ') {
-        if(tokenEnd==length-1) error("Invalid");
+    tokenEnd = tokenStart;
+    while (input[tokenEnd] != '=' && input[tokenEnd] != ' ') {
+        if (tokenEnd == length - 1) error("Invalid");
         ++tokenEnd;
     }
-    if(input[tokenEnd]!='=') error("Invalid");
-    str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+"-"+str+"=";
+    if (input[tokenEnd] != '=') error("Invalid");
+    str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + "-" + str + "=";
     UpdatePos();
 }
 
 void TokenScanner::Quote(char *token) {
-     if(input[tokenStart]!='"')  error("Invalid");
-     ++tokenStart;
-     tokenEnd=tokenStart;
-    while (input[tokenEnd] != '"'&&input[tokenEnd] !=' ') {
-        if(tokenEnd==length-1) error("Invalid");
+    if (input[tokenStart] != '"') error("Invalid");
+    ++tokenStart;
+    tokenEnd = tokenStart;
+    while (input[tokenEnd] != '"' && input[tokenEnd] != ' ') {
+        if (input[tokenEnd] < 32 || input[tokenEnd] == 127 ) error("Invalid");
+        if(input[tokenEnd] == '"'){
+            if(tokenEnd!=length-1&&input[tokenEnd+1]!=' ') error("Invalid");
+        }
+        if (tokenEnd == length - 1) error("Invalid");
         ++tokenEnd;
     }
-    if(input[tokenEnd]!='"') error("Invalid");
-    std::string str = input.substr(tokenStart, tokenEnd-tokenStart);
-    operation=operation+'"'+ str+'"'+" ";
+    if (input[tokenEnd] != '"') error("Invalid");
+    if (tokenEnd - tokenStart > 60||tokenEnd-tokenStart==0)error("Invalid");
+    std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
+    operation = operation + '"' + str + '"' + " ";
     const char *tmp = str.c_str();
     strcpy(token, tmp);
     UpdatePos();
 }
 
 std::string TokenScanner::ShowRest() {
-    return input.substr(tokenStart,length);
+    return input.substr(tokenStart, length);
 }
 
 std::string TokenScanner::ShowOperation() {
@@ -146,7 +184,7 @@ std::string TokenScanner::ShowOperation() {
 
 //private
 void TokenScanner::UpdatePos() {
-    if(tokenEnd>=input.size()) return;
+    if (tokenEnd >= input.size()) return;
     tokenStart = tokenEnd + 1;
     while (input[tokenStart] == ' ') {
         ++tokenStart;
@@ -154,6 +192,8 @@ void TokenScanner::UpdatePos() {
     }
     tokenEnd = tokenStart;
 }
+
+
 
 
 

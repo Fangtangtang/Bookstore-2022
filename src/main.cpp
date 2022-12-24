@@ -152,7 +152,7 @@ std::string ProcessLine(const std::string &input,
     if (cmd == "delete") {
         if (user.privilege != host) error("Invalid");
         char userID[31];
-        if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(userID);
+        if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(userID);
         else error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         ID id(userID);
@@ -162,20 +162,12 @@ std::string ProcessLine(const std::string &input,
     }
     //购买图书
     if (cmd == "buy") {
-        //****************************
-//        std::cout<<"BUYYYYYYYYYYYYYYYYYYYYYYYYYYYY BOOK\n";
-//        bookManager.PRINT();
-        //****************************
         if (user.privilege == none)error("Invalid");
         double price = bookManager.Buy(tokenScanner);
         transactionManager.Income(price);
         success = true;
     }
     if (cmd == "select") {
-//        ****************************
-//        std::cout<<"SELECTTTTTTTTTTTTTTTTTT BOOK\n";
-//        bookManager.PRINT();
-//        ****************************
         if (user.privilege < clerk) error("Invalid");
         //找书或新建
         ISBN isbn = bookManager.Select(tokenScanner);
@@ -184,10 +176,6 @@ std::string ProcessLine(const std::string &input,
         success = true;
     }
     if (cmd == "modify") {
-//        ****************************
-//        std::cout<<"MODIFYYYYYYYYYYYYYYYYYYYYYYYYYYYY BOOK\n";
-//        bookManager.PRINT();
-//        ****************************
         //用户权限
         if (user.privilege < clerk) error("Invalid");
         //选中图书

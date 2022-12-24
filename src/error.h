@@ -27,8 +27,10 @@ private:
 // catch (ErrorException &ex) {
 //        std::cout << ex.getMessage() << std::endl;
 // }
-static void error(std::string message) {
-    throw ErrorException(message);
-}
+//static
+void error(std::string message);
+//{
+//    throw ErrorException(message);
+//}
 
 #endif //BOOKSTORE_ERROR_H

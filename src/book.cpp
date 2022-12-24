@@ -288,7 +288,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     memset(token, 0, sizeof(token));
     long iter;
     if (type == "ISBN") {
-        tokenScanner.NextToken(token);
+        tokenScanner.NextToken(token,20, true);
         ISBN isbn(token);
         std::pair<Book, bool> pair = bookList.Find(isbn, iter);
         if (pair.second) pair.first.Print();
@@ -343,7 +343,7 @@ double BookManager::Buy(TokenScanner &tokenScanner) {
     char bookISBN[21];
     memset(bookISBN, 0, sizeof(bookISBN));
     int quantity;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN,20, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
     else error("Invalid");
@@ -388,7 +388,7 @@ ISBN BookManager::Select(TokenScanner &tokenScanner) {
     char isbn[21];
     memset(isbn, 0, sizeof(isbn));
     long iter;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(isbn);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(isbn,20, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens())error("Invalid");
     ISBN bookISBN(isbn);
@@ -451,7 +451,7 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
         tokenScanner.TakeType(type);
         if (type == "ISBN") {
             if (change_ISBN) error("Invalid");
-            tokenScanner.NextToken(token);
+            tokenScanner.NextToken(token,20, true);
             ISBN newISBN(token);
             //不可重复
             long iter;

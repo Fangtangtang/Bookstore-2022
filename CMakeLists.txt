@@ -7,6 +7,7 @@ add_executable(code
         src/main.cpp
         src/account.cpp
         src/tokenScanner.cpp
+        src/error.cpp
         src/book.cpp
         src/log.cpp
         src/loggingStatus.cpp

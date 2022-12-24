@@ -6,3 +6,14 @@ code
 Makefile
 CMakeCache.txt
 cmake_install.cmake
+account_information
+book_author
+book_information
+book_keyword
+book_name
+finance_log
+log
+my.out
+code.cbp
+.cmake/
+Testing/

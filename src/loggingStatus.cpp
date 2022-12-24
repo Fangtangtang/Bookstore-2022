@@ -6,7 +6,7 @@
 void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, AccountManager &accountManager) {
     char userID[31], password[31];
     memset(password, 0, sizeof(password));
-    tokenScanner.NextToken(userID);
+    tokenScanner.SpecialNextToken(userID);
     //输入ID对应的account
     Account suAccount;
     std::pair<Account, bool> pair = accountManager.FindAccount(userID);
@@ -14,7 +14,7 @@ void LoggingStatus::Su(TokenScanner &tokenScanner, CurrentAccount &user, Account
     suAccount = pair.first;
     //输入了密码
     if (tokenScanner.HasMoreTokens()) {
-        tokenScanner.NextToken(password);
+        tokenScanner.SpecialNextToken(password);
         //密码错误
         if (strcmp(password, suAccount.password) != 0)error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");

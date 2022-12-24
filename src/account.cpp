@@ -74,11 +74,11 @@ void AccountManager::Register(TokenScanner &tokenScanner) {
     memset(userID,0, sizeof(userID));
     memset(password,0, sizeof(password));
     memset(name,0, sizeof(name));
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(userID);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(userID);
     else error("Invalid");
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(password);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(password);
     else error("Invalid");
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name,30, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     ID id(userID);
@@ -95,18 +95,18 @@ void AccountManager::ChangePassword(TokenScanner &tokenScanner, CurrentAccount &
     memset(userID,0, sizeof(userID));
     memset(password1,0, sizeof(password1));
     memset(password2,0, sizeof(password2));
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(userID);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(userID);
     else error("Invalid");
     ID id(userID);
     long iter;
     std::pair<Account, bool> pair = accountList.Find(id, iter);
     if (!pair.second) error("Invalid");
     Account account = pair.first;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(password1);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(password1);
     else error("Invalid");
     if (user.privilege != host) {
         if (strcmp(password1, pair.first.password) != 0) error("Invalid");
-        if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(password2);
+        if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(password2);
         else error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //修改密码
@@ -118,7 +118,7 @@ void AccountManager::ChangePassword(TokenScanner &tokenScanner, CurrentAccount &
             Modify(account, iter, password1);
         } else {
             if (strcmp(password1, pair.first.password) != 0) error("Invalid");
-            tokenScanner.NextToken(password2);
+            tokenScanner.SpecialNextToken(password2);
             if (tokenScanner.HasMoreTokens()) error("Invalid");
             Modify(account, iter, password2);
         }
@@ -142,13 +142,13 @@ void AccountManager::AddUser(TokenScanner &tokenScanner, Privilege &privilege) {
     memset(password,0, sizeof(password));
     memset(name,0, sizeof(name));
     int pri;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(userID);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(userID);
     else error("Invalid");
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(password);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(password);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(pri);
     else error("Invalid");
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name,30, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     ID id(userID);

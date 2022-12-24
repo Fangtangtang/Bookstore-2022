@@ -1,6 +1,7 @@
 //
 // Created by 房诗涵 on 2022/12/10.
-//
+//类 模板（声明和实现需要写在一起）
+//.h 写接口 .cpp实现 .hpp可以当成.h + .cpp
 
 #ifndef BOOKSTORE_LINKLIST_H
 #define BOOKSTORE_LINKLIST_H

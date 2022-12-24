@@ -100,17 +100,16 @@ std::string ProcessLine(const std::string &input,
     std::string cmd;
     bool success = false;
     tokenScanner.NextToken(cmd);
-
-    --c;
-    ++a;
+//    --c;
+//    ++a;
 //    if(c==0){
 //        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 //    }
 //    std::cout << a << " " << cmd << ": ";
 
-    if(cmd=="clear") {
-        loggingStatus.Clear();
-    }
+//    if(cmd=="clear") {
+//        loggingStatus.Clear();
+//    }
     if (cmd == "quit" || cmd == "exit") {
 //
 //        std::cout<<"\n@@@@@@@@@@@@\n";

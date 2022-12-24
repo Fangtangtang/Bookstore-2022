@@ -163,7 +163,7 @@ Privilege AccountManager::toPrivilege(int i) {
     if (i == 1) return customer;
     if (i == 3) return clerk;
     if (i == 7) return host;
-    if (i == 0) return visitor;
+//    if (i == 0) return visitor;
     error("Invalid");
     return none;
 }

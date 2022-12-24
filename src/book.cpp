@@ -302,6 +302,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     long iter;
     if (type == "ISBN") {
         tokenScanner.NextToken(token, 20, true);
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         ISBN isbn(token);
         std::pair<Book, bool> pair = bookList.Find(isbn, iter);
         if (pair.second) pair.first.Print();
@@ -310,19 +311,21 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     }
     if (type == "name") {
         tokenScanner.Quote(token);
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         Name index(token);
         nameList.FindPrint(index);
         success = true;
     }
     if (type == "author") {
-
         tokenScanner.Quote(token);
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         Author index(token);
         authorList.FindPrint(index);
         success = true;
     }
     if (type == "keyword") {
         tokenScanner.Quote(token);
+        if (tokenScanner.HasMoreTokens()) error("Invalid");
         //构造时判断token是否合法
         Keyword index(token);
         //keyword对应bookLocation集合
@@ -339,7 +342,6 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         }
         success = true;
     }
-
     if (!success) error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
 }

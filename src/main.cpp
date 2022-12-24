@@ -101,7 +101,7 @@ std::string ProcessLine(const std::string &input,
     bool success = false;
     tokenScanner.NextToken(cmd);
 //    --c;
-//    ++a;
+    ++a;
 //    if(c==0){
 //        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 //    }
@@ -111,13 +111,7 @@ std::string ProcessLine(const std::string &input,
 //        loggingStatus.Clear();
 //    }
     if (cmd == "quit" || cmd == "exit") {
-//
-//        std::cout<<"\n@@@@@@@@@@@@\n";
-//        bookManager.PRINT();
-//        std::cout<<"@@@@@@@@@@@@\n\n";
-
         if (tokenScanner.HasMoreTokens()) error("Invalid");
-//        exit(0);
         return "RETURN";
     }
     //登录账户

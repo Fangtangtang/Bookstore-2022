@@ -200,7 +200,7 @@ std::string TokenScanner::ShowOperation() {
 
 //private
 void TokenScanner::UpdatePos() {
-    if (tokenEnd >= length-1) return;
+    if (tokenEnd >= length) return;
     tokenStart = tokenEnd + 1;
     while (input[tokenStart] == ' ') {
         ++tokenStart;

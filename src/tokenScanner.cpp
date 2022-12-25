@@ -92,6 +92,7 @@ void TokenScanner::NextToken(int &intNum) {
     intNum = 0;
     long long num=0;
     while (input[tokenStart]=='0'){
+        if(input[tokenStart+1]==' ') break;
         if(tokenStart==length-1) break;
         ++tokenStart;
     }

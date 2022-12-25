@@ -27,14 +27,13 @@ bool TokenScanner::HasMoreTokens() {
 }
 
 void TokenScanner::NextToken(std::string &str) {
-    while (input[tokenStart] == ' ') {
-        ++tokenStart;
-        if (tokenStart == length - 1) break;
-    }
-    tokenEnd = tokenStart;
+//    while (input[tokenStart] == ' ') {
+//        ++tokenStart;
+//        if (tokenStart == length - 1) break;
+//    }
+//    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
         if(!std::isprint(input[tokenEnd]))error("Invalid");
-//        if (input[tokenEnd] < 32 || input[tokenEnd] == 127)
         ++tokenEnd;
         if (tokenEnd == length) break;
     }
@@ -45,11 +44,11 @@ void TokenScanner::NextToken(std::string &str) {
 
 void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
     //前导空格
-    while (input[tokenStart] == ' ') {
-        ++tokenStart;
-        if (tokenStart == length - 1) break;
-    }
-    tokenEnd = tokenStart;
+//    while (input[tokenStart] == ' ') {
+//        ++tokenStart;
+//        if (tokenStart == length - 1) break;
+//    }
+//    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
         if(!std::isprint(input[tokenEnd]))error("Invalid");
         if (!allowQuote) {
@@ -68,11 +67,11 @@ void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
 }
 
 void TokenScanner::SpecialNextToken(char *token) {
-    while (input[tokenStart] == ' ') {
-        ++tokenStart;
-        if (tokenStart == length - 1) break;
-    }
-    tokenEnd = tokenStart;
+//    while (input[tokenStart] == ' ') {
+//        ++tokenStart;
+//        if (tokenStart == length - 1) break;
+//    }
+//    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
         if ((input[tokenEnd] - '0' < 10 && input[tokenEnd] - '0' >= 0) || input[tokenEnd] == '_' ||
             (input[tokenEnd] - 'a' >= 0 && input[tokenEnd] - 'a' < 26) ||

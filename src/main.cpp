@@ -57,7 +57,7 @@ int main() {
             operation = ProcessLine(input, accountManager, bookManager, logManager, transactionManager, loggingStatus,
                                     user);
         } catch (ErrorException &ex) {
-            std::cout << ex.getMessage() << std::endl;
+            std::cout << ex.getMessage() << '\n';
         }
         if(operation=="RETURN") return 0;
         if(operation!="BLANK"){
@@ -72,7 +72,6 @@ int main() {
 bool Initialize() {
     std::fstream test;
     test.open("account_information");
-//    std::cout<<"TEST:"<<test.good()<<'\n';
     //文件不存在 初始化
     if (!test.good()) {
         test.close();
@@ -121,7 +120,7 @@ std::string ProcessLine(const std::string &input,
     }
     //登出
     if (cmd == "logout") {
-        if (user.privilege == none)error("Invalid");
+        if (user.privilege <= visitor)error("Invalid");
         loggingStatus.Logout(tokenScanner, user);
         success = true;
     }
@@ -132,7 +131,7 @@ std::string ProcessLine(const std::string &input,
     }
     //修改密码
     if (cmd == "passwd") {
-        if (user.privilege == none)error("Invalid");
+        if (user.privilege <= visitor)error("Invalid");
         accountManager.ChangePassword(tokenScanner, user);
         success = true;
     }
@@ -155,7 +154,7 @@ std::string ProcessLine(const std::string &input,
     }
     //购买图书
     if (cmd == "buy") {
-        if (user.privilege == none)error("Invalid");
+        if (user.privilege <= visitor)error("Invalid");
         double price = bookManager.Buy(tokenScanner);
         transactionManager.Income(price);
         success = true;
@@ -194,7 +193,7 @@ std::string ProcessLine(const std::string &input,
         success = true;
     }
     if (cmd == "show") {
-        if (user.privilege == none)error("Invalid");
+        if (user.privilege <= visitor)error("Invalid");
         std::string str = tokenScanner.ShowRest();
         if (!tokenScanner.HasMoreTokens() || str[0] == '-') {
             bookManager.Show(tokenScanner);

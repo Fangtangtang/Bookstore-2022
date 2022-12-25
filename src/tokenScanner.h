@@ -15,6 +15,7 @@ public:
 
     ~TokenScanner()=default;
 
+    //除去前导空格
     void Initialize();
 
     //是否仍有输入

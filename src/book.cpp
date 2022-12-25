@@ -344,7 +344,7 @@ double BookManager::Buy(TokenScanner &tokenScanner) {
     int quantity;
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(bookISBN, 20, true);
     else error("Invalid");
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity, false);
     else error("Invalid");
     if (quantity == 0) error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
@@ -655,7 +655,7 @@ void BookManager::RewriteAuthor(const Book &book, const Author_ISBN &key) {
 double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {
     int quantity;
     double totalCast;
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(quantity, false);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(totalCast);
     else error("Invalid");

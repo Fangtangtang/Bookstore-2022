@@ -73,7 +73,7 @@ void TransactionManager::ShowFinance(TokenScanner &tokenScanner) {
         return;
     }
     int count;
-    tokenScanner.NextToken(count);
+    tokenScanner.NextToken(count, false);
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     if (count == 0) {
         std::cout << '\n';

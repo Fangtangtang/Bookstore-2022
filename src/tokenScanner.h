@@ -30,7 +30,7 @@ public:
     //特殊要求的char*
     void SpecialNextToken(char* token);
     //下一个合法token为int
-    void NextToken(int &intNum);
+    void NextToken(int &intNum,bool isPri);
 
     //下一个合法token为double
     void NextToken(double &doubleNum);

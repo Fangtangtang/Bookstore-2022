@@ -147,7 +147,7 @@ void AccountManager::AddUser(TokenScanner &tokenScanner, Privilege &privilege) {
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(password);
     else error("Invalid");
-    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(pri);
+    if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(pri, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name,30, true);
     else error("Invalid");

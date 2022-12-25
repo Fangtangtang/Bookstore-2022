@@ -88,7 +88,7 @@ void TokenScanner::SpecialNextToken(char *token) {
     UpdatePos();
 }
 
-void TokenScanner::NextToken(int &intNum) {
+void TokenScanner::NextToken(int &intNum,bool isPri) {
     intNum = 0;
     long long num=0;
     while (input[tokenStart]=='0'){
@@ -105,6 +105,7 @@ void TokenScanner::NextToken(int &intNum) {
             if (tokenEnd == length) break;
         } else error("Invalid");
     }
+    if(isPri&&tokenEnd-tokenStart!=1)error("Invalid");
     if (num > 2147483647)error("Invalid");
     intNum=int(num);
     std::string str = input.substr(tokenStart, tokenEnd - tokenStart);

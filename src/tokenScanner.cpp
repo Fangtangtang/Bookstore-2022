@@ -138,8 +138,8 @@ void TokenScanner::NextToken(double &doubleNum) {
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
             mul *= 0.1;
             doubleNum += (input[tokenEnd] - '0') * mul;
-//            ++count;
-//            if(count ==3)error("Invalid");
+            ++count;
+            if(count ==3)error("Invalid");
             ++tokenEnd;
             if (tokenEnd == length) break;
         } else error("Invalid");
@@ -174,7 +174,7 @@ void TokenScanner::Quote(char *token) {
     ++tokenStart;
     tokenEnd = tokenStart;
     while (input[tokenEnd] != '"' && input[tokenEnd] != ' ') {
-        if (input[tokenEnd] < 32 || input[tokenEnd] == 127 ) error("Invalid");
+        if(!std::isprint(input[tokenEnd]))error("Invalid");
         if(input[tokenEnd] == '"'){
             if(tokenEnd!=length-1&&input[tokenEnd+1]!=' ') error("Invalid");
         }

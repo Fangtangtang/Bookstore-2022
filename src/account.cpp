@@ -35,7 +35,7 @@ bool ID::operator>=(const ID &id) const {
 
 ID &ID::operator=(const ID &id) = default;
 
-ID ID::GetIndex(ID) {
+ID ID::GetIndex(const ID&) {
     return *this;
 }
 
@@ -132,7 +132,7 @@ std::pair<Account, bool> AccountManager::FindAccount(char *UserID) {
 }
 
 void AccountManager::Modify(Account account, long iter, char *newPassword) {
-    if (strlen(newPassword) > 30) error("Invalid");//非法
+//    if (strlen(newPassword) > 30) error("Invalid");//非法
     strcpy(account.password, newPassword);
     accountList.WriteValue(account, iter);
 }

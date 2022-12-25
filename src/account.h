@@ -36,7 +36,7 @@ struct ID {
 
     ID &operator=(const ID &id);
 
-    ID GetIndex(ID);
+    ID GetIndex(const ID&);
 
 };
 

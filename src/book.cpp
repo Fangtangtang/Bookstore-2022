@@ -242,46 +242,11 @@ Author Book::GetIndex(Author author1) const {
     return author;
 }
 
-//BookLocation-----------------------------------------
-//
-//bool BookLocation::operator>(const BookLocation &right) const {
-//    return bookISBN > right.bookISBN;
-//}
-//
-//bool BookLocation::operator==(const BookLocation &right) const {
-//    return bookISBN == right.bookISBN;
-//}
-//
-//bool BookLocation::operator>=(const BookLocation &right) const {
-//    return bookISBN >= right.bookISBN;
-//}
-//
-//BookLocation &BookLocation::operator=(const std::pair<BookLocation, bool> &pair) {
-//    *this = pair.first;
-//    return *this;
-//}
-//
-//Keyword_ISBN BookLocation::GetKey(Keyword keywordIsbn) const {
-//    Keyword_ISBN tmp;
-//    tmp.keyword = keyword;
-//    tmp.bookISBN = bookISBN;
-//    return tmp;
-//}
-//
-//Keyword BookLocation::GetIndex(Keyword) const {
-//    return keyword;
-//}
-//
-//void BookLocation::Print() {
-//    std::string s_bookISBN = bookISBN.bookISBN, s_keywords = keyword.keyword;
-//    std::cout << s_bookISBN << '\t' << s_keywords << '\n';
-//}
 
 //BookManager-----------------------------------
 
 void BookManager::Show(TokenScanner &tokenScanner) {
     //无附加 遍历bookList
-
     if (!tokenScanner.HasMoreTokens()) {
         bookList.PrintList();
         return;
@@ -289,10 +254,11 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     bool success = false;
     std::string type;
     tokenScanner.TakeType(type);
-    char token[61];
-    memset(token, 0, sizeof(token));
+//    char token[61];
+//    memset(token, 0, sizeof(token));
     long iter;
     if (type == "ISBN") {
+        char token[21]={'\0'};
         tokenScanner.NextToken(token, 20, true);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         ISBN isbn(token);
@@ -302,6 +268,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "name") {
+        char token[61]={'\0'};
         tokenScanner.Quote(token);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         Name index(token);
@@ -309,6 +276,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "author") {
+        char token[61]={'\0'};
         tokenScanner.Quote(token);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         Author index(token);
@@ -316,6 +284,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "keyword") {
+        char token[61]={'\0'};
         tokenScanner.Quote(token);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //构造时判断token是否合法

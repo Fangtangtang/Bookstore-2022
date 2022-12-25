@@ -153,10 +153,10 @@ void TokenScanner::NextToken(double &doubleNum) {
 }
 
 void TokenScanner::TakeType(std::string &str) {
-    while (input[tokenStart] == ' ') {
-        ++tokenStart;
-        if (tokenStart == length - 1) break;
-    }
+//    while (input[tokenStart] == ' ') {
+//        ++tokenStart;
+//        if (tokenStart == length - 1) break;
+//    }
     if (input[tokenStart] != '-') error("Invalid");
     ++tokenStart;
     tokenEnd = tokenStart;
@@ -168,7 +168,8 @@ void TokenScanner::TakeType(std::string &str) {
     if (input[tokenEnd+1] == ' ') error("Invalid");
     str = input.substr(tokenStart, tokenEnd - tokenStart);
     operation = operation + "-" + str + "=";
-    UpdatePos();
+    tokenStart=tokenEnd+1;
+    tokenEnd=tokenStart;
 }
 
 void TokenScanner::Quote(char *token) {
@@ -193,7 +194,7 @@ void TokenScanner::Quote(char *token) {
 }
 
 std::string TokenScanner::ShowRest() {
-    return input.substr(tokenStart, length);
+    return input.substr(tokenStart, length-tokenStart);
 }
 
 std::string TokenScanner::ShowOperation() {

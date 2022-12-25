@@ -19,7 +19,7 @@ public:
     void Initialize();
 
     //是否仍有输入
-    bool HasMoreTokens() ;
+    bool HasMoreTokens() const ;
 
     //下一个合法token为string
     void NextToken(std::string &str);

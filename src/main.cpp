@@ -30,7 +30,7 @@ int main() {
     LogManager logManager;
     TransactionManager transactionManager;
     //***************************
-    accountManager.InitialAccount();
+//    accountManager.InitialAccount();
     //***************************
     if (initialize_flag) {
         accountManager.InitialAccount();

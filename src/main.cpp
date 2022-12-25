@@ -211,7 +211,6 @@ std::string ProcessLine(const std::string &input,
         logManager.PrintLog();
         success = true;
     }
-//    bookManager.PRINT();
     if (!success) error("Invalid");
     return tokenScanner.ShowOperation();
 }

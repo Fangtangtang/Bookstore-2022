@@ -10,10 +10,7 @@ ISBN::ISBN() {
 }
 
 ISBN::ISBN(char *isbn) {
-//    if(strlen(isbn)>20)error("Invalid");
-//    for(int i=0;i< strlen(isbn);++i){
-//        if (isbn[i] < 32 || isbn[i] == 127) error("Invalid");
-//    }
+    memset(bookISBN, 0, sizeof(bookISBN));
     strcpy(bookISBN, isbn);
 }
 
@@ -41,10 +38,7 @@ Name::Name() {
 }
 
 Name::Name(char *name1) {
-//    if(strlen(name1)>60) error("Invalid");
-//    for(int i=0;i< strlen(name1);++i){
-//        if (name1[i] < 32 || name1[i] == 127||name1[i] == '"' ) error("Invalid");
-//    }
+    memset(name, 0, sizeof(name));
     strcpy(name, name1);
 }
 
@@ -69,10 +63,7 @@ Author::Author() {
 }
 
 Author::Author(char *author1) {
-//    if(strlen(author1)>60) error("Invalid");
-//    for(int i=0;i< strlen(author1);++i){
-//        if (author1[i] < 32 || author1[i] == 127||author1[i] == '"' ) error("Invalid");
-//    }
+    memset(author, 0, sizeof(author));
     strcpy(author, author1);
 }
 
@@ -101,6 +92,7 @@ Keyword::Keyword(char *keyword1) {
     for (int i = 0; i < strlen(keyword1); ++i) {
         if (keyword1[i] == '|') error("Invalid");
     }
+    memset(keyword, 0, sizeof(keyword));
     strcpy(keyword, keyword1);
 }
 

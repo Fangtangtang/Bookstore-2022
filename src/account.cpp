@@ -13,6 +13,7 @@ ID::ID() {
 
 //由char*初始化
 ID::ID(char *id) {
+    memset(userID, 0, sizeof(userID));
     strcpy(userID, id);
 }
 

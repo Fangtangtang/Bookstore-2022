@@ -6,6 +6,7 @@
 
 //Record--------------------------------------------------------
 Record::Record(int count, ID id, std::string str) {
+    memset(operation, 0, sizeof(operation));
     num=count;
     userID=id;
     const char *tmp = str.c_str();

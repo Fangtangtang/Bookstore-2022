@@ -22,7 +22,7 @@ void TokenScanner::Initialize() {
 }
 
 bool TokenScanner::HasMoreTokens() const {
-    if (tokenEnd >= length-1) return false;
+    if (tokenEnd >= length) return false;
     else return true;
 }
 
@@ -200,7 +200,10 @@ std::string TokenScanner::ShowOperation() {
 
 //private
 void TokenScanner::UpdatePos() {
-    if (tokenEnd >= length-1) return;
+    if (tokenEnd >= length-1){
+        ++tokenEnd;
+        return;
+    }
     tokenStart = tokenEnd + 1;
     while (input[tokenStart] == ' ') {
         ++tokenStart;

@@ -91,12 +91,15 @@ void TokenScanner::SpecialNextToken(char *token) {
 void TokenScanner::NextToken(int &intNum,bool isPri) {
     intNum = 0;
     long long num=0;
-    while (input[tokenStart]=='0'){
-        if(input[tokenStart+1]==' ') break;
-        if(tokenStart==length-1) break;
-        ++tokenStart;
+//    while (input[tokenStart]=='0'){
+//        if(input[tokenStart+1]==' ') break;
+//        if(tokenStart==length-1) break;
+//        ++tokenStart;
+//    }
+//    tokenEnd=tokenStart;
+    if(input[tokenStart]=='0'){
+        if(tokenStart<length-1&&input[tokenStart+1]!=' ') error("Invalid");
     }
-    tokenEnd=tokenStart;
     while (input[tokenEnd] != ' ') {
         num *= 10;
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
@@ -116,11 +119,15 @@ void TokenScanner::NextToken(int &intNum,bool isPri) {
 void TokenScanner::NextToken(double &doubleNum) {
     doubleNum = 0;
     //前导0
-    while (input[tokenStart]=='0'){
-        if(tokenStart==length-1) break;
-        ++tokenStart;
+//    while (input[tokenStart]=='0'){
+//        if(tokenStart==length-1) break;
+//        ++tokenStart;
+//    }
+//    tokenEnd=tokenStart;
+    if(input[tokenStart]=='0'){
+        if(tokenStart<length-1&&(input[tokenStart+1]!=' '&&input[tokenStart+1]!='.')) error("Invalid");
     }
-    tokenEnd=tokenStart;
+
     //整数部分
     while (input[tokenEnd] != ' ') {
         if (input[tokenEnd] == '.') {

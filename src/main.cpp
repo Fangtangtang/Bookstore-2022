@@ -34,8 +34,6 @@ int main() {
     //***************************
     if (initialize_flag) {
         accountManager.InitialAccount();
-//        transactionManager.InitialTransation();
-//        logManager.InitialLog();
     }
 
     //登录栈
@@ -46,6 +44,9 @@ int main() {
     //浮点数输出精度设置
     std::cout << std::fixed << std::setprecision(2);
     std::string input;
+
+    //某行为eof 退出
+    //行末eof 退出（cin坏掉
     while (getline(std::cin, input)) {
         std::string operation;
         userID = user.userID;
@@ -53,7 +54,7 @@ int main() {
             //合法操作
             operation = ProcessLine(input, accountManager, bookManager, logManager, transactionManager, loggingStatus,
                                     user);
-            //EOF终止
+            //EOF终止 这样会多出一个invalid？
 //            if (std::cin.eof()) return 0;
 
         } catch (ErrorException &ex) {
@@ -66,31 +67,6 @@ int main() {
             logManager.AddLog(userID, operation);
         }
     }
-
-
-
-//    while (true) {
-//        std::string operation;
-//        userID = user.userID;
-//        try {
-//            std::string input;
-//            getline(std::cin, input);
-//            //合法操作
-//            operation = ProcessLine(input, accountManager, bookManager, logManager, transactionManager, loggingStatus,
-//                                    user);
-//            //EOF终止
-//            if (std::cin.eof()) return 0;
-//
-//        } catch (ErrorException &ex) {
-//            std::cout << ex.getMessage() << '\n';
-//        }
-//        if(operation=="RETURN") return 0;
-//        if(operation!="BLANK"){
-//            //向日志添加操作信息
-//            if (operation.empty()) operation = "FAILED";
-//            logManager.AddLog(userID, operation);
-//        }
-//    }
 }
 
 //以”account_information“是否存在为判断依据
@@ -131,9 +107,6 @@ std::string ProcessLine(const std::string &input,
 //    }
 //    std::cout << a << " " << cmd << ": ";
 
-//    if(cmd=="clear") {
-//        loggingStatus.Clear();
-//    }
     if (cmd == "quit" || cmd == "exit") {
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         return "RETURN";

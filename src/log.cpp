@@ -7,8 +7,8 @@
 //Record--------------------------------------------------------
 Record::Record(int count, ID id, std::string str) {
     memset(operation, 0, sizeof(operation));
-    num=count;
-    userID=id;
+    num = count;
+    userID = id;
     const char *tmp = str.c_str();
     strcpy(operation, tmp);
 }
@@ -18,7 +18,7 @@ int Record::GetKey(int) const {
 }
 
 void Record::Print() {
-std::cout<<userID.userID<<'\t'<<operation<<'\n';
+    std::cout << userID.userID << '\t' << operation << '\n';
 }
 
 //Transaction--------------------------------------------------
@@ -67,9 +67,7 @@ void TransactionManager::Expense(double cast) {
 
 void TransactionManager::ShowFinance(TokenScanner &tokenScanner) {
     if (!tokenScanner.HasMoreTokens()) {
-//        if (financeCount == 0) std::cout << income << '\n';
-//        else
-            std::cout << "+ " << income << " - " << expense << '\n';
+        std::cout << "+ " << income << " - " << expense << '\n';
         return;
     }
     int count;
@@ -116,7 +114,7 @@ void LogManager::PrintLog() {
 
 void LogManager::AddLog(const ID &id, const std::string &str) {
     ++count;
-    Record record(count,id,str);
+    Record record(count, id, str);
     logList.Insert(count, record);
 }
 

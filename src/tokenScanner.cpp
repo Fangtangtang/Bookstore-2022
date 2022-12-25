@@ -43,12 +43,6 @@ void TokenScanner::NextToken(std::string &str) {
 }
 
 void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
-    //前导空格
-//    while (input[tokenStart] == ' ') {
-//        ++tokenStart;
-//        if (tokenStart == length - 1) break;
-//    }
-//    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
         if(!std::isprint(input[tokenEnd]))error("Invalid");
         if (!allowQuote) {
@@ -67,11 +61,6 @@ void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
 }
 
 void TokenScanner::SpecialNextToken(char *token) {
-//    while (input[tokenStart] == ' ') {
-//        ++tokenStart;
-//        if (tokenStart == length - 1) break;
-//    }
-//    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
         if ((input[tokenEnd] - '0' < 10 && input[tokenEnd] - '0' >= 0) || input[tokenEnd] == '_' ||
             (input[tokenEnd] - 'a' >= 0 && input[tokenEnd] - 'a' < 26) ||
@@ -91,12 +80,6 @@ void TokenScanner::SpecialNextToken(char *token) {
 void TokenScanner::NextToken(int &intNum,bool isPri) {
     intNum = 0;
     long long num=0;
-//    while (input[tokenStart]=='0'){
-//        if(input[tokenStart+1]==' ') break;
-//        if(tokenStart==length-1) break;
-//        ++tokenStart;
-//    }
-//    tokenEnd=tokenStart;
     if(input[tokenStart]=='0'){
         if(tokenStart<length-1&&input[tokenStart+1]!=' ') error("Invalid");
     }
@@ -118,12 +101,6 @@ void TokenScanner::NextToken(int &intNum,bool isPri) {
 
 void TokenScanner::NextToken(double &doubleNum) {
     doubleNum = 0;
-    //前导0
-//    while (input[tokenStart]=='0'){
-//        if(tokenStart==length-1) break;
-//        ++tokenStart;
-//    }
-//    tokenEnd=tokenStart;
     if(input[tokenStart]=='0'){
         if(tokenStart<length-1&&(input[tokenStart+1]!=' '&&input[tokenStart+1]!='.')) error("Invalid");
     }
@@ -148,7 +125,7 @@ void TokenScanner::NextToken(double &doubleNum) {
             mul *= 0.1;
             doubleNum += (input[tokenEnd] - '0') * mul;
             ++count;
-            if(count ==3)error("Invalid");
+//            if(count ==3)error("Invalid");
             ++tokenEnd;
             if (tokenEnd == length) break;
         } else error("Invalid");
@@ -160,10 +137,6 @@ void TokenScanner::NextToken(double &doubleNum) {
 }
 
 void TokenScanner::TakeType(std::string &str) {
-//    while (input[tokenStart] == ' ') {
-//        ++tokenStart;
-//        if (tokenStart == length - 1) break;
-//    }
     if (input[tokenStart] != '-') error("Invalid");
     ++tokenStart;
     tokenEnd = tokenStart;

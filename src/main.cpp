@@ -45,17 +45,17 @@ int main() {
     ID userID;
     //浮点数输出精度设置
     std::cout << std::fixed << std::setprecision(2);
-    while (true) {
+    std::string input;
+    while (getline(std::cin, input)) {
         std::string operation;
         userID = user.userID;
         try {
-            std::string input;
-            getline(std::cin, input);
-            //EOF终止
-            if (std::cin.eof()) return 0;
             //合法操作
             operation = ProcessLine(input, accountManager, bookManager, logManager, transactionManager, loggingStatus,
                                     user);
+            //EOF终止
+//            if (std::cin.eof()) return 0;
+
         } catch (ErrorException &ex) {
             std::cout << ex.getMessage() << '\n';
         }
@@ -66,6 +66,31 @@ int main() {
             logManager.AddLog(userID, operation);
         }
     }
+
+
+
+//    while (true) {
+//        std::string operation;
+//        userID = user.userID;
+//        try {
+//            std::string input;
+//            getline(std::cin, input);
+//            //合法操作
+//            operation = ProcessLine(input, accountManager, bookManager, logManager, transactionManager, loggingStatus,
+//                                    user);
+//            //EOF终止
+//            if (std::cin.eof()) return 0;
+//
+//        } catch (ErrorException &ex) {
+//            std::cout << ex.getMessage() << '\n';
+//        }
+//        if(operation=="RETURN") return 0;
+//        if(operation!="BLANK"){
+//            //向日志添加操作信息
+//            if (operation.empty()) operation = "FAILED";
+//            logManager.AddLog(userID, operation);
+//        }
+//    }
 }
 
 //以”account_information“是否存在为判断依据

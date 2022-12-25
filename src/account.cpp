@@ -82,12 +82,12 @@ void AccountManager::Register(TokenScanner &tokenScanner) {
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name,30, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
-    ID id(userID);
-    long iter = 0;
-    //寻找ID
-    std::pair<Account, bool> pair = accountList.Find(id, iter);
+//    ID id(userID);
+//    long iter = 0;
+//    //寻找ID
+//    std::pair<Account, bool> pair = accountList.Find(id, iter);
     //已经存在
-    if (pair.second) error("Invalid");
+//    if (pair.second) error("Invalid");
     CreateAccount(userID, password, customer, name);
 }
 

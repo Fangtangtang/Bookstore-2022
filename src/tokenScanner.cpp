@@ -127,7 +127,7 @@ void TokenScanner::NextToken(double &doubleNum) {
     if(input[tokenStart]=='0'){
         if(tokenStart<length-1&&(input[tokenStart+1]!=' '&&input[tokenStart+1]!='.')) error("Invalid");
     }
-
+    if(input[tokenStart]=='.') error("Invalid");
     //整数部分
     while (input[tokenEnd] != ' ') {
         if (input[tokenEnd] == '.') {

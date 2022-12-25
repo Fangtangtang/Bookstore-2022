@@ -138,8 +138,8 @@ void TokenScanner::NextToken(double &doubleNum) {
         if (input[tokenEnd] - '0' >= 0 && input[tokenEnd] - '0' < 10) {
             mul *= 0.1;
             doubleNum += (input[tokenEnd] - '0') * mul;
-            ++count;
-            if(count ==3)error("Invalid");
+//            ++count;
+//            if(count ==3)error("Invalid");
             ++tokenEnd;
             if (tokenEnd == length) break;
         } else error("Invalid");

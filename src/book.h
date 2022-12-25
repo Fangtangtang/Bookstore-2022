@@ -40,7 +40,7 @@ struct Name {
 
     Name();
 
-    Name(char* name1);
+    explicit Name(char* name1);
 
     ~Name()=default;
 
@@ -59,7 +59,7 @@ struct Author {
 
     Author();
 
-    Author(char* author1);
+    explicit Author(char* author1);
 
     ~Author()=default;
 
@@ -79,9 +79,9 @@ struct Keyword{
 
     Keyword();
 
-    Keyword(char* keyword1);
+    explicit Keyword(char* keyword1);
 
-    Keyword(const std::string& keyword1);
+    explicit Keyword(const std::string& keyword1);
 
     ~Keyword()=default;
 
@@ -193,32 +193,6 @@ struct Book {
     void Print();
 
 };
-
-//存于“book_keyword"中的元素，
-//包含单个keyword ISBN location
-//struct BookLocation{
-//
-//    Keyword keyword;
-//
-//    ISBN bookISBN;
-//
-//    long location=0;
-//
-//    //基于key做比较 重载实际不需要
-//    bool operator>(const BookLocation &right) const;
-//
-//    bool operator==(const BookLocation &right) const;
-//
-//    bool operator>=(const BookLocation &right) const;
-//
-//    BookLocation &operator=(const std::pair<BookLocation,bool> &pair);
-//
-//    Keyword_ISBN GetKey(Keyword keywordIsbn) const;
-//
-//    Keyword GetIndex(Keyword)const;
-//
-//    void Print();
-//};
 
 class BookManager{
 public:

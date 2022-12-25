@@ -341,15 +341,10 @@ void BookManager::Update(Book book, long iter) {
     nameIbsn.name = book.name;
     nameIbsn.bookISBN = book.bookISBN;
     RewriteName(book, nameIbsn);
-//    nameList.Find(nameIbsn, iter);
-//    nameList.WriteValue(book, iter);
-    //authorList
     Author_ISBN authorIbsn;
     authorIbsn.author = book.author;
     authorIbsn.bookISBN = book.bookISBN;
     RewriteAuthor(book, authorIbsn);
-//    authorList.Find(authorIbsn, iter);
-//    authorList.WriteValue(book, iter);
 }
 
 ISBN BookManager::Select(TokenScanner &tokenScanner) {
@@ -363,10 +358,6 @@ ISBN BookManager::Select(TokenScanner &tokenScanner) {
     //不存在 新建
     if (!bookList.Find(bookISBN, iter).second)
         iter = AddBook(bookISBN);
-
-//    std::cout<<"SELE: \n";
-//    bookList.PrintList();
-//    std::cout<<"SELE: \n\n";
 
     return bookISBN;
 }
@@ -390,9 +381,6 @@ void BookManager::GetBook(Book &book, ISBN isbn, long &iter) {
 
 bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, ISBN &isbn) {
     if (!tokenScanner.HasMoreTokens()) error("Invalid");
-
-//    std::cout << "\nBEFORE";
-//    PRINT();
 
     Book modify = book;//修改后信息
     std::string type, str;
@@ -480,11 +468,6 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             rewrite_name_flag = true;
             rewrite_author_flag = true;
         }
-//
-//        std::cout<<"BEFORE    MODYFYYYYYYYYYY: \n";
-//        bookList.PrintList();
-//        std::cout<<"MODIFYYYYYYYYYY: \n\n";
-
     }
     //原书
 //    Book selected = bookList.ReadValue(pair.second);
@@ -513,13 +496,6 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
     }
     char *foreKeywords = book.keywords;
     if (reinsert_keywords_flag) ReinsertKeyword(foreKeywords, book.bookISBN, book.bookISBN, keywordGroup);
-
-//    std::cout << "AFTER    MODYFYYYYYYYYYY: \n";
-//    keywordList.PrintList();
-//    PRINT();
-//    std::cout << "MODIFYYYYYYYYYY: \n\n";
-
-
     return change_ISBN;
 }
 
@@ -541,7 +517,7 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
         if (std::find(keywordGroup.begin(), keywordGroup.end(), keyword) != keywordGroup.end())
             error("Invalid");
         keywordGroup.push_back(keyword);
-        if (end >= str.length()) break;
+        if (end >= str.length()-1) break;
         ++end;
         start = end;
     }

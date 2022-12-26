@@ -130,6 +130,7 @@ void TokenScanner::NextToken(double &doubleNum) {
             if (tokenEnd == length) break;
         } else error("Invalid");
     }
+    if(count==0)  error("Invalid");
     if (tokenEnd - tokenStart > 13) error("Invalid");
     std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
     operation = operation + str + " ";

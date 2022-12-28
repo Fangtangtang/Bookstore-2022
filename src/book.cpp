@@ -254,11 +254,9 @@ void BookManager::Show(TokenScanner &tokenScanner) {
     bool success = false;
     std::string type;
     tokenScanner.TakeType(type);
-//    char token[61];
-//    memset(token, 0, sizeof(token));
     long iter;
     if (type == "ISBN") {
-        char token[21]={'\0'};
+        char token[21] = {'\0'};
         tokenScanner.NextToken(token, 20, true);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         ISBN isbn(token);
@@ -268,7 +266,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "name") {
-        char token[61]={'\0'};
+        char token[61] = {'\0'};
         tokenScanner.Quote(token);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         Name index(token);
@@ -276,7 +274,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "author") {
-        char token[61]={'\0'};
+        char token[61] = {'\0'};
         tokenScanner.Quote(token);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         Author index(token);
@@ -284,7 +282,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         success = true;
     }
     if (type == "keyword") {
-        char token[61]={'\0'};
+        char token[61] = {'\0'};
         tokenScanner.Quote(token);
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         //构造时判断token是否合法
@@ -381,11 +379,10 @@ void BookManager::GetBook(Book &book, ISBN isbn, long &iter) {
 
 bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, ISBN &isbn) {
     if (!tokenScanner.HasMoreTokens()) error("Invalid");
-
     Book modify = book;//修改后信息
     std::string type, str;
-    char token[61];
-    memset(token, 0, sizeof(token));
+//    char token[61];
+//    memset(token, 0, sizeof(token));
     std::vector<std::string> keywordGroup;
     //是否已经有该类修改
     bool change_ISBN = false;
@@ -405,8 +402,11 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
     //收集modify信息
     while (tokenScanner.HasMoreTokens()) {
         //修改信息类型
+        bool success = false;
         tokenScanner.TakeType(type);
         if (type == "ISBN") {
+            char token[21];
+            memset(token, 0, sizeof(token));
             if (change_ISBN) error("Invalid");
             tokenScanner.NextToken(token, 20, true);
             ISBN newISBN(token);
@@ -423,8 +423,11 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             reinsert_name_flag = true;
             reinsert_author_flag = true;
             reinsert_keywords_flag = true;
+            success = true;
         }
         if (type == "name") {
+            char token[61];
+            memset(token, 0, sizeof(token));
             if (change_name) error("Invalid");
             tokenScanner.Quote(token);
             Name newName(token);
@@ -433,8 +436,11 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             reinsert_name_flag = true;
             rewrite_ISBN_flag = true;
             rewrite_author_flag = true;
+            success = true;
         }
         if (type == "author") {
+            char token[61];
+            memset(token, 0, sizeof(token));
             if (change_author)error("Invalid");
             tokenScanner.Quote(token);
             Author newAuthor(token);
@@ -443,9 +449,12 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             reinsert_author_flag = true;
             rewrite_ISBN_flag = true;
             rewrite_name_flag = true;
+            success = true;
         }
         //keywords整段 在修改keyword文件时切片
         if (type == "keyword") {
+            char token[61];
+            memset(token, 0, sizeof(token));
             if (change_keyword) error("Invalid");
             tokenScanner.Quote(token);
             //keywords过长
@@ -459,6 +468,7 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             rewrite_name_flag = true;
             rewrite_author_flag = true;
             reinsert_keywords_flag = true;
+            success = true;
         }
         if (type == "price") {
             if (change_price)error("Invalid");
@@ -467,7 +477,9 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             rewrite_ISBN_flag = true;
             rewrite_name_flag = true;
             rewrite_author_flag = true;
+            success = true;
         }
+        if (!success)error("Invalid");
     }
     //原书
 //    Book selected = bookList.ReadValue(pair.second);
@@ -504,20 +516,20 @@ void BookManager::CutKeywords(std::string str, std::vector<std::string> &keyword
     int start = 0;
     std::string keyword;
     int end = 0;
-    if(str[0]=='|') error("Invalid");
+    if (str[0] == '|') error("Invalid");
     while (true) {
         while (str[end] != '|' && end < str.length()) {
             ++end;
         }
         if (str[end] == '|') {
             if (end < str.length() - 1 && str[end + 1] == '|') error("Invalid");
-            if(end==str.length() - 1) error("Invalid");
+            if (end == str.length() - 1) error("Invalid");
         }
         keyword = str.substr(start, end - start);
         if (std::find(keywordGroup.begin(), keywordGroup.end(), keyword) != keywordGroup.end())
             error("Invalid");
         keywordGroup.push_back(keyword);
-        if (end >= str.length()-1) break;
+        if (end >= str.length() - 1) break;
         ++end;
         start = end;
     }

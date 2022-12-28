@@ -60,8 +60,8 @@ int main() {
         } catch (ErrorException &ex) {
             std::cout << ex.getMessage() << '\n';
         }
-        if(operation=="RETURN") return 0;
-        if(operation!="BLANK"){
+        if (operation == "RETURN") return 0;
+        if (operation != "BLANK") {
             //向日志添加操作信息
             if (operation.empty()) operation = "FAILED";
             logManager.AddLog(userID, operation);
@@ -83,7 +83,7 @@ bool Initialize() {
     }
 }
 
-int c =6, a = 0;
+int c = 6, a = 0;
 
 //返回操作语句
 std::string ProcessLine(const std::string &input,
@@ -95,7 +95,7 @@ std::string ProcessLine(const std::string &input,
                         CurrentAccount &user) {
     TokenScanner tokenScanner(input);
     tokenScanner.Initialize();
-    if(!tokenScanner.HasMoreTokens())return "BLANK";
+    if (!tokenScanner.HasMoreTokens())return "BLANK";
     //读入命令
     std::string cmd;
     bool success = false;
@@ -118,7 +118,7 @@ std::string ProcessLine(const std::string &input,
     }
     //登出
     if (cmd == "logout") {
-        if (user.privilege <= visitor)error("Invalid");
+        if (user.privilege <= visitor) error("Invalid");
         loggingStatus.Logout(tokenScanner, user);
         success = true;
     }
@@ -129,7 +129,7 @@ std::string ProcessLine(const std::string &input,
     }
     //修改密码
     if (cmd == "passwd") {
-        if (user.privilege <= visitor)error("Invalid");
+        if (user.privilege <= visitor) error("Invalid");
         accountManager.ChangePassword(tokenScanner, user);
         success = true;
     }
@@ -169,14 +169,14 @@ std::string ProcessLine(const std::string &input,
         //用户权限
         if (user.privilege < clerk) error("Invalid");
         //选中图书
-        ISBN isbn = loggingStatus.FindSelected(),newISBN;
+        ISBN isbn = loggingStatus.FindSelected(), newISBN;
         long iter = 0;
         Book book;
-        bookManager.GetBook(book,isbn, iter);
+        bookManager.GetBook(book, isbn, iter);
         bool change_ISBN_flag = bookManager.Modify(tokenScanner, book, iter, newISBN);
-        if (change_ISBN_flag){
+        if (change_ISBN_flag) {
 //            loggingStatus.SelectBook(isbn);
-            loggingStatus.ChangeISBN(isbn,newISBN);
+            loggingStatus.ChangeISBN(isbn, newISBN);
         }
         success = true;
     }
@@ -185,7 +185,7 @@ std::string ProcessLine(const std::string &input,
         ISBN isbn = loggingStatus.FindSelected();
         long iter = 0;
         Book book;
-        bookManager.GetBook(book,isbn, iter);
+        bookManager.GetBook(book, isbn, iter);
         double cast = bookManager.Import(tokenScanner, isbn);
         transactionManager.Expense(cast);
         success = true;

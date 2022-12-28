@@ -82,12 +82,6 @@ void AccountManager::Register(TokenScanner &tokenScanner) {
     if (tokenScanner.HasMoreTokens()) tokenScanner.NextToken(name,30, true);
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
-//    ID id(userID);
-//    long iter = 0;
-//    //寻找ID
-//    std::pair<Account, bool> pair = accountList.Find(id, iter);
-    //已经存在
-//    if (pair.second) error("Invalid");
     CreateAccount(userID, password, customer, name);
 }
 
@@ -132,7 +126,6 @@ std::pair<Account, bool> AccountManager::FindAccount(char *UserID) {
 }
 
 void AccountManager::Modify(Account account, long iter, char *newPassword) {
-//    if (strlen(newPassword) > 30) error("Invalid");//非法
     strcpy(account.password, newPassword);
     accountList.WriteValue(account, iter);
 }

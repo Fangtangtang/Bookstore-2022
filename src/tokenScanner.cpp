@@ -101,6 +101,7 @@ void TokenScanner::NextToken(int &intNum,bool isPri) {
 
 void TokenScanner::NextToken(double &doubleNum) {
     doubleNum = 0;
+    bool double_flag=false;
     if(input[tokenStart]=='0'){
         if(tokenStart<length-1&&(input[tokenStart+1]!=' '&&input[tokenStart+1]!='.')) error("Invalid");
     }
@@ -109,6 +110,7 @@ void TokenScanner::NextToken(double &doubleNum) {
     while (input[tokenEnd] != ' ') {
         if (input[tokenEnd] == '.') {
             ++tokenEnd;
+            double_flag= true;
             break;
         }
         doubleNum *= 10;
@@ -130,7 +132,7 @@ void TokenScanner::NextToken(double &doubleNum) {
             if (tokenEnd == length) break;
         } else error("Invalid");
     }
-    if(count==0)  error("Invalid");
+    if(count==0&&double_flag)  error("Invalid");
     if (tokenEnd - tokenStart > 13) error("Invalid");
     std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
     operation = operation + str + " ";

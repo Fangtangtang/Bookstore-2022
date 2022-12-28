@@ -56,7 +56,6 @@ public:
     }
 
     ~LinkList() {
-//        std::cout<<"breakdown\n";
         r_w_LinkList.seekp(head);
         r_w_LinkList.write(reinterpret_cast<char *> (&headNode1), sizeof(HeadNode));
     }

@@ -381,8 +381,6 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
     if (!tokenScanner.HasMoreTokens()) error("Invalid");
     Book modify = book;//修改后信息
     std::string type, str;
-//    char token[61];
-//    memset(token, 0, sizeof(token));
     std::vector<std::string> keywordGroup;
     //是否已经有该类修改
     bool change_ISBN = false;
@@ -413,7 +411,6 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             //不可重复
             long iter;
             if (bookList.Find(newISBN, iter).second)error("Invalid");
-//            if (newISBN == book.bookISBN)
             modify.bookISBN = newISBN;
             //设置已修改
             change_ISBN = true;
@@ -458,7 +455,7 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             if (change_keyword) error("Invalid");
             tokenScanner.Quote(token);
             //keywords过长
-            if (strlen(token) > 60) error("Invalid");
+//            if (strlen(token) > 60) error("Invalid");
             str = token;
             //keywords切片查重
             CutKeywords(str, keywordGroup);
@@ -483,7 +480,7 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
     }
     //原书
 //    Book selected = bookList.ReadValue(pair.second);
-    long iterISBN = foreIter;//book_information中位置
+//    long iterISBN = foreIter;//book_information中位置
     // 重插或重写
     if (reinsert_ISBN_flag) {
         ReinsertISBN(modify, book.bookISBN);
@@ -622,9 +619,6 @@ double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {
     long iter;
     std::pair<Book, bool> pair = bookList.Find(isbn, iter);
     if (!pair.second) error("Invalid");
-
-//    PRINT();
-
     Book book = pair.first;
     book.quantity += quantity;
     //重写
@@ -637,6 +631,5 @@ double BookManager::Import(TokenScanner &tokenScanner, ISBN isbn) {
     key2.author = book.author;
     key2.bookISBN = book.bookISBN;
     RewriteAuthor(book, key2);
-//    PRINT();
     return totalCast;
 }

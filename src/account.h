@@ -18,6 +18,7 @@ enum Privilege{none,visitor,customer,clerk,host};
 
 //key:ID
 struct ID {
+
     char userID[31]={'\0'};
 
     ID();
@@ -41,7 +42,9 @@ struct ID {
 };
 
 struct CurrentAccount{
+
     ID userID;
+
     Privilege privilege=none;
 };
 
@@ -67,7 +70,6 @@ struct Account {
     ID GetKey(ID id) const ;
 
 //    void Print();
-
 };
 
 class AccountManager{
@@ -110,7 +112,6 @@ private:
     //int转privilege
     static Privilege toPrivilege(int i);
 
-    //todo
     //判断信息是否合法（长度等）
     //判断ID是否已经存在
     void CreateAccount(char* UserID, char* Password,Privilege privilege,char* Username);

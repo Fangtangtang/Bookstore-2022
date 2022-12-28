@@ -36,6 +36,7 @@ public:
     void ChangeISBN(ISBN isbn,ISBN newISBN);
 
     bool Find(const ID& id);
+
 private:
     //登录用户ID栈
     std::vector<ID> IDVector;

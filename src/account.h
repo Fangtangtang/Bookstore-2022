@@ -67,7 +67,7 @@ struct Account {
     Account &operator=(const std::pair<Account, bool>& pair);
 
     //获取key
-    ID GetKey(ID id) const ;
+    ID GetKey(const ID& id) const ;
 
 //    void Print();
 };

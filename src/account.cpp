@@ -60,7 +60,7 @@ Account &Account::operator=(const std::pair<Account, bool>& pair) {
     return *this;
 }
 
-ID Account::GetKey(ID id) const {
+ID Account::GetKey(const ID& id) const {
     return userID;
 }
 
@@ -146,8 +146,8 @@ void AccountManager::AddUser(TokenScanner &tokenScanner, Privilege &privilege) {
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     ID id(userID);
-    long iter;
-    if(accountList.Find(id,iter).second) error("Invalid");
+//    long iter;
+//    if(accountList.Find(id,iter).second) error("Invalid");
     Privilege newPri = toPrivilege(pri);
     if (newPri >= privilege)error("Invalid");
     CreateAccount(userID, password, newPri, name);
@@ -157,14 +157,13 @@ Privilege AccountManager::toPrivilege(int i) {
     if (i == 1) return customer;
     if (i == 3) return clerk;
     if (i == 7) return host;
-//    if (i == 0) return visitor;
     error("Invalid");
     return none;
 }
 
 void AccountManager::CreateAccount(char *UserID, char *password, Privilege privilege, char *name) {
     //char*长度合法？
-    if (strlen(UserID) > 30 || strlen(password) > 30 || strlen(name) > 30)error("Invalid");
+//    if (strlen(UserID) > 30 || strlen(password) > 30 || strlen(name) > 30)error("Invalid");
     ID id(UserID);
     long iter;
     std::pair<Account, bool> pair = accountList.Find(id, iter);

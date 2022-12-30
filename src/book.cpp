@@ -289,7 +289,7 @@ void BookManager::Show(TokenScanner &tokenScanner) {
         Keyword index(token);
         //keyword对应bookLocation集合
         std::vector<Keyword_ISBN> bookLocationGroup = keywordList.FindSubList(index);
-        long bookIter;
+//        long bookIter;
         if (bookLocationGroup.empty()) std::cout << '\n';
         else {
             //遍历vector 找书 Print
@@ -356,7 +356,6 @@ ISBN BookManager::Select(TokenScanner &tokenScanner) {
     //不存在 新建
     if (!bookList.Find(bookISBN, iter).second)
         iter = AddBook(bookISBN);
-
     return bookISBN;
 }
 

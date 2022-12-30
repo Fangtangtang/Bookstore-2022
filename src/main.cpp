@@ -54,9 +54,6 @@ int main() {
             //合法操作
             operation = ProcessLine(input, accountManager, bookManager, logManager, transactionManager, loggingStatus,
                                     user);
-            //EOF终止 这样会多出一个invalid？
-//            if (std::cin.eof()) return 0;
-
         } catch (ErrorException &ex) {
             std::cout << ex.getMessage() << '\n';
         }
@@ -83,8 +80,6 @@ bool Initialize() {
     }
 }
 
-int c = 6, a = 0;
-
 //返回操作语句
 std::string ProcessLine(const std::string &input,
                         AccountManager &accountManager,
@@ -100,13 +95,6 @@ std::string ProcessLine(const std::string &input,
     std::string cmd;
     bool success = false;
     tokenScanner.NextToken(cmd);
-//    --c;
-    ++a;
-//    if(c==0){
-//        std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-//    }
-//    std::cout << a << " " << cmd << ": ";
-
     if (cmd == "quit" || cmd == "exit") {
         if (tokenScanner.HasMoreTokens()) error("Invalid");
         return "RETURN";
@@ -142,6 +130,7 @@ std::string ProcessLine(const std::string &input,
     if (cmd == "delete") {
         if (user.privilege != host) error("Invalid");
         char userID[31];
+        memset(userID,0, sizeof(userID));
         if (tokenScanner.HasMoreTokens()) tokenScanner.SpecialNextToken(userID);
         else error("Invalid");
         if (tokenScanner.HasMoreTokens()) error("Invalid");
@@ -175,7 +164,6 @@ std::string ProcessLine(const std::string &input,
         bookManager.GetBook(book, isbn, iter);
         bool change_ISBN_flag = bookManager.Modify(tokenScanner, book, iter, newISBN);
         if (change_ISBN_flag) {
-//            loggingStatus.SelectBook(isbn);
             loggingStatus.ChangeISBN(isbn, newISBN);
         }
         success = true;

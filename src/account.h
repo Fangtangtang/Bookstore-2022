@@ -92,7 +92,7 @@ public:
 
     //删除账户 {7} delete [UserID]
     //仅{7}
-    void DeleteUser(ID id);
+    void DeleteUser(const ID& id);
 
     //修改密码 {1} passwd [UserID] ([CurrentPassword])? [NewPassword]
     //如果当前帐户权限等级为 {7} 则可以省略 [CurrentPassword]（登录栈中用？）

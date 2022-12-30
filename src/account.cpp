@@ -146,8 +146,6 @@ void AccountManager::AddUser(TokenScanner &tokenScanner, Privilege &privilege) {
     else error("Invalid");
     if (tokenScanner.HasMoreTokens()) error("Invalid");
     ID id(userID);
-//    long iter;
-//    if(accountList.Find(id,iter).second) error("Invalid");
     Privilege newPri = toPrivilege(pri);
     if (newPri >= privilege)error("Invalid");
     CreateAccount(userID, password, newPri, name);
@@ -162,8 +160,6 @@ Privilege AccountManager::toPrivilege(int i) {
 }
 
 void AccountManager::CreateAccount(char *UserID, char *password, Privilege privilege, char *name) {
-    //char*长度合法？
-//    if (strlen(UserID) > 30 || strlen(password) > 30 || strlen(name) > 30)error("Invalid");
     ID id(UserID);
     long iter;
     std::pair<Account, bool> pair = accountList.Find(id, iter);
@@ -176,7 +172,6 @@ void AccountManager::CreateAccount(char *UserID, char *password, Privilege privi
     accountList.Insert(id, newAccount);
 }
 
-void AccountManager::DeleteUser(ID id) {
+void AccountManager::DeleteUser(const ID& id) {
     if (!accountList.Delete(id)) error("Invalid");
 }
-

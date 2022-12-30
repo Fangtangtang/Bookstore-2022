@@ -453,8 +453,6 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
             memset(token, 0, sizeof(token));
             if (change_keyword) error("Invalid");
             tokenScanner.Quote(token);
-            //keywords过长
-//            if (strlen(token) > 60) error("Invalid");
             str = token;
             //keywords切片查重
             CutKeywords(str, keywordGroup);
@@ -477,9 +475,6 @@ bool BookManager::Modify(TokenScanner &tokenScanner, Book book, long foreIter, I
         }
         if (!success)error("Invalid");
     }
-    //原书
-//    Book selected = bookList.ReadValue(pair.second);
-//    long iterISBN = foreIter;//book_information中位置
     // 重插或重写
     if (reinsert_ISBN_flag) {
         ReinsertISBN(modify, book.bookISBN);

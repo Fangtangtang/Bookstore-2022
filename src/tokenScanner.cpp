@@ -27,11 +27,6 @@ bool TokenScanner::HasMoreTokens() const {
 }
 
 void TokenScanner::NextToken(std::string &str) {
-//    while (input[tokenStart] == ' ') {
-//        ++tokenStart;
-//        if (tokenStart == length - 1) break;
-//    }
-//    tokenEnd = tokenStart;
     while (input[tokenEnd] != ' ') {
         if(!std::isprint(input[tokenEnd]))error("Invalid");
         ++tokenEnd;
@@ -52,7 +47,6 @@ void TokenScanner::NextToken(char *token, int validSize, bool allowQuote) {
         if (tokenEnd - tokenStart > validSize)error("Invalid");
         if (tokenEnd == length) break;
     }
-//    if (tokenEnd - tokenStart > validSize)error("Invalid");
     std::string str = input.substr(tokenStart, tokenEnd - tokenStart);
     operation = operation + str + " ";
     const char *tmp = str.c_str();
@@ -160,9 +154,9 @@ void TokenScanner::Quote(char *token) {
     tokenEnd = tokenStart;
     while (input[tokenEnd] != '"' && input[tokenEnd] != ' ') {
         if(!std::isprint(input[tokenEnd]))error("Invalid");
-        if(input[tokenEnd] == '"'){
-            if(tokenEnd!=length-1&&input[tokenEnd+1]!=' ') error("Invalid");
-        }
+//        if(input[tokenEnd] == '"'){
+//            if(tokenEnd!=length-1&&input[tokenEnd+1]!=' ') error("Invalid");
+//        }
         if (tokenEnd == length - 1) error("Invalid");
         ++tokenEnd;
     }

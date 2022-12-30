@@ -18,7 +18,7 @@ int Record::GetKey(int) const {
 }
 
 void Record::Print() {
-    std::cout << userID.userID << '\t' << operation << '\n';
+    std::cout<<"("<< num<<")" << userID.userID << '\n' << operation << "\n";
 }
 
 //Transaction--------------------------------------------------
